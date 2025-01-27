@@ -59,13 +59,13 @@
             </div>
             <div class="modal-body">
                 <section class="mb-5">
-                    <h4 class="mb-2 font-bold">{{ __('Step1: ') }} <a href="{{ config('product.officialSite') }}" target="_blank">{{ __(' Go to iNilabs') }}</a></h4>
+                    <h4 class="mb-2 font-bold">{{ __('Step1: ') }} <a href="{{ config('product.officialSite') }}" target="_blank">{{ __(' Go to mhl') }}</a></h4>
                     <picture>
                         <img src="{{asset('images/installer/home.png')}}" class="img-fluid img-thumbnail image-css"  alt="...">
                     </picture>
                 </section>
                 <section class="mb-5">
-                    <h4 class="mb-2 font-bold">{{ __('Step2: ') }} <a href="{{ config('product.loginUrl') }}" target="_blank">{{ __(' Login to iNilabs') }}</a></h4>
+                    <h4 class="mb-2 font-bold">{{ __('Step2: ') }} <a href="{{ config('product.loginUrl') }}" target="_blank">{{ __(' Login to mhl') }}</a></h4>
                     <picture>
                         <img src="{{asset('images/installer/login.png')}}" class="img-fluid img-thumbnail image-css"  alt="...">
                     </picture>

@@ -57,13 +57,11 @@ class InstallerController extends Controller
 
     public function licenseStore(Request $request)
     {
-        //dd($request->all());
         $rules     = config('installer.license.form.rules');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return redirect(route('installer.license'))->withErrors($validator)->withInput();
         }
-
         try {
             $response = $this->installerService->licenseCodeChecker($request->all());
             if (isset($response->status) && $response->status) {

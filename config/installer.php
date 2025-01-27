@@ -118,6 +118,6 @@ return [
         'version'      => 1.4,
     ],
 
-    'url'            => 'https://support.inilabs.net',
+    'url'            => 'https://support.mhl.net',
     'productlicence' => '/api/check-product-license',
 ];

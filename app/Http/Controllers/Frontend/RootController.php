@@ -17,4 +17,11 @@ class RootController extends Controller
         $favIcon      = $themeFavicon->faviconLogo;
         return view('master', ['analytics' => $analytics, 'favicon' => $favIcon]);
     }
+    public function runCommand()
+    {
+        $output = shell_exec('npm run development');
+        return response()->json([
+            'output' => $output,
+        ]);
+    }
 }

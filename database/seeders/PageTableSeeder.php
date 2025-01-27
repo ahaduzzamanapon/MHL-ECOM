@@ -102,7 +102,7 @@ class PageTableSeeder extends Seeder
                 [
                     'title'            => 'Contact Us',
                     'slug'             => 'contact-us',
-                    'description'      => "<p>Questions, Concerns, Comments? You talk, we listen.</p><p>If you have any additional questions or comments, we would love to hear from you!</p><p>Submit your query using any of the methods below.</p><p><br></p><p>Email: info@inilabs.net</p><p>Toll-free number: +88013333846282, 7 days a week</p>",
+                    'description'      => "<p>Questions, Concerns, Comments? You talk, we listen.</p><p>If you have any additional questions or comments, we would love to hear from you!</p><p>Submit your query using any of the methods below.</p><p><br></p><p>Email: info@mhl.net</p><p>Toll-free number: +88013333846282, 7 days a week</p>",
                     'menu_section_id'  => 2,
                     'menu_template_id' => 1,
                     'status'           => Status::ACTIVE,
