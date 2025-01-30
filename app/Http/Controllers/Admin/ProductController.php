@@ -39,6 +39,7 @@ class ProductController extends AdminController
 
     public function index(PaginateRequest $request): \Illuminate\Http\Response|\Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
+        //dd($request->all());
         try {
             return ProductAdminResource::collection($this->productService->list($request));
         } catch (Exception $exception) {
@@ -58,14 +59,9 @@ class ProductController extends AdminController
     public function store(ProductRequest $request): \Illuminate\Http\Response|ProductAdminResource|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            if (env('DEMO')) {
-                return new ProductAdminResource($this->productService->store($request));
-            } else {
-                if ($this->apiRequest->status) {
-                    return new ProductAdminResource($this->productService->store($request));
-                }
-                return response(['status' => false, 'message' => $this->apiRequest->message], 422);
-            }
+
+        return new ProductAdminResource($this->productService->store($request));
+
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }

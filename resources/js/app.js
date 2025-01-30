@@ -49,7 +49,7 @@ axios.defaults.baseURL = API_URL + '/api';
 
 axios.interceptors.request.use(
     config => {
-        config.headers['x-api-key'] = API_KEY;
+        config.headers['x-api-key'] = 'waedae';
         if (localStorage.getItem('vuex')) {
             const vuex = JSON.parse(localStorage.getItem('vuex'));
             const token = vuex.auth.authToken;

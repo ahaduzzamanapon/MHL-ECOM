@@ -14,6 +14,7 @@ export const frontendSetting = {
     actions: {
         lists: function (context, payload) {
             return new Promise((resolve, reject) => {
+
                 let url = "frontend/setting";
                 if (payload) {
                     url = url + appService.requestHandler(payload);
@@ -24,6 +25,7 @@ export const frontendSetting = {
                 }).catch((err) => {
                     reject(err);
                 });
+
             });
         }
     },

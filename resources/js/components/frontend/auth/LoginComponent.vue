@@ -43,7 +43,7 @@
                                 {{ countryCode.flag_emoji }}
                                 <span class="whitespace-nowrap text-xs">{{ countryCode.calling_code }}</span>
                             </li>
-                        </ul
+                        </ul>
 
                     </div>
                     <input v-model="form.phone" v-on:keypress="phoneNumber($event)" v-bind:class="errors.phone
