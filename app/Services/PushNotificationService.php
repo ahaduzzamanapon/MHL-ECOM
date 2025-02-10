@@ -88,8 +88,10 @@ class PushNotificationService
             }
 
             $fcmTokenArray = array_merge($fcmWebDeviceToken, $fcmMobileDeviceToken);
-            $firebase      = new FirebaseService();
-            $firebase->sendNotification($pushNotification, $fcmTokenArray, "promotion");
+            foreach($fcmTokenArray as $fcmToken){
+                $firebase      = new FirebaseService();
+                $firebase->sendNotification_one($pushNotification, $fcmToken, "promotion");
+            }
             return $pushNotification;
         } catch (Exception $exception) {
             Log::info($exception->getMessage());

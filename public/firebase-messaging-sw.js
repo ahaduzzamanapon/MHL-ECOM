@@ -1,13 +1,13 @@
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js');
 let config = {
-        apiKey: "AIzaSyDvvrGgb1k8eJmj5XNjlQnWoruQfcgqbLE",
-        authDomain: "shopking-b8b78.firebaseapp.com",
-        projectId: "shopking-b8b78",
-        storageBucket: "shopking-b8b78.appspot.com",
-        messagingSenderId: "806204285496",
-        appId: "1:806204285496:web:7b0c79f6df7ba1bba07ccd",
-        measurementId: "G-V2SH66NJ2E",
+        apiKey: "AIzaSyDQ0IEycUR9VPzts5EZQ-sBGDA1QUVQRo8",
+        authDomain: "unicom-c298a.firebaseapp.com",
+        projectId: "unicom-c298a",
+        storageBucket: "unicom-c298a.firebasestorage.app",
+        messagingSenderId: "739041520183",
+        appId: "1:739041520183:web:f2edecddda597c2bbd2db2",
+        measurementId: "G-6J02FG1ZK3",
  };
 firebase.initializeApp(config);
 const messaging = firebase.messaging();

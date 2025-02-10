@@ -9,6 +9,9 @@ use App\Models\ProductAttributeOption;
 use App\Models\ProductCategory;
 use App\Models\ProductTax;
 use App\Models\ProductTag;
+use App\Models\ProductAttribute;
+use App\Models\ProductVariation;
+use App\Models\Stock;
 use App\Enums\Ask;
 use App\Enums\Status;
 use App\Models\Product;
@@ -23,6 +26,8 @@ use App\Http\Requests\PaginateRequest;
 use App\Http\Requests\ChangeImageRequest;
 use App\Http\Requests\ProductOfferRequest;
 use App\Http\Requests\ShippingAndReturnRequest;
+use App\Http\Resources\SimpleProductDetailsResource;
+
 
 class ProductService
 {
@@ -750,6 +755,66 @@ class ProductService
             throw new Exception($exception->getMessage(), 422);
         }
     }
+    public function get_product_by_sku($req)
+    {
+        try {
+            $products = [];
+            foreach ($req as $item) {
+                if(isset($item['productId'])==''|| isset($item['productId'])==null){
+                    continue;
+                }
+                $product_id = (int)$item['productId'];
+                $sku = (int)$item['variationSku'];
+                // $data[] =[
+                //     'sku' => $sku,
+                //     'product_id' => $product_id
+                // ];
+
+                // dd($product_id,$sku);
+                $product_data= Product::with('media', 'videos', 'category', 'unit', 'taxes')
+                ->withSum('stockItems', 'quantity')
+                ->where(['id' => $product_id, 'status' => Status::ACTIVE])
+                ->first();
+                //dd($product_data);
+                $product_data=new SimpleProductDetailsResource($product_data);
+                $ProductVariation = ProductVariation::where('sku', $sku)
+                    ->where('product_id', $product_id)
+                    ->first();
+                $stockQuantity = Stock::where('sku', $sku)->sum('quantity');
+                if(empty($ProductVariation)){
+                    $products[] = [
+                        'product_data' => $product_data,
+                        'stock_quantity' => $stockQuantity,
+                        'attr' => null
+                    ];
+                    continue;
+                }
+                $attr=[];
+                $attr[ProductAttribute::find($ProductVariation->product_attribute_id)->name]= ProductAttributeOption::find($ProductVariation->product_attribute_option_id)->name;
+                while ($ProductVariation->parent_id != null) {
+                    $ProductVariation = ProductVariation::where('id', $ProductVariation->parent_id)->first();
+                    $attr[ProductAttribute::find($ProductVariation->product_attribute_id)->name]= ProductAttributeOption::find($ProductVariation->product_attribute_option_id)->name;
+                }
+                $attr = array_reverse($attr);
+                $products[] = [
+                    'product_data' => $product_data,
+                    'stock_quantity' => $stockQuantity,
+                    'attr' => $attr
+                ];
+            }
+            return $products;
+
+
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+            throw new Exception($exception->getMessage(), 422);
+        }
+    }
+
+    /**
+     * Recursive function to fetch child variations
+     */
+
 
     /**
      * @throws Exception

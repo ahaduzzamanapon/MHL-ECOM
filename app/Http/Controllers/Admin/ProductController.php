@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use Exception;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Exports\ProductExport;
 use App\Services\ProductService;
+use App\Services\FirebaseService;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\PaginateRequest;
@@ -133,7 +135,25 @@ class ProductController extends AdminController
     public function productOffer(ProductOfferRequest $request, Product $product): \Illuminate\Foundation\Application|\Illuminate\Http\Response|ProductAdminResource|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            return new ProductAdminResource($this->productService->productOffer($request, $product));
+            $data_offer_data = new ProductAdminResource($this->productService->productOffer($request, $product));
+            $input = $request->all();
+            $title = $input['discount'] . "% Discount on " . $data_offer_data->name;
+            $description = "Get " . $input['discount'] . "% off on " . $data_offer_data->name . " from " . $input['offer_start_date'] . " to " . $input['offer_end_date'];
+            $pushNotification = (object)[
+                'title' => $title,
+                'description' => $description,
+                'image' => $data_offer_data->cover
+            ];
+            $fcmWebDeviceToken    = User::whereNotNull('web_token')->pluck('web_token')->toArray();
+            $fcmMobileDeviceToken = User::whereNotNull('device_token')->pluck('device_token')->toArray();
+            $fcmTokenArray = array_merge($fcmWebDeviceToken, $fcmMobileDeviceToken);
+            foreach($fcmTokenArray as $fcmToken){
+                $firebase      = new FirebaseService();
+                $firebase->sendNotification_one($pushNotification, $fcmToken, "promotion");
+            }
+
+
+            return $data_offer_data;
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
@@ -154,6 +174,15 @@ class ProductController extends AdminController
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+    public function get_product_by_sku(Request $request)
+    {
+
+        try {
+            return  $this->productService->get_product_by_sku($request->all());
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
 
     public function posProduct(Product $product, Request $request): SimpleProductDetailsResource|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
@@ -163,4 +192,5 @@ class ProductController extends AdminController
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+
 }

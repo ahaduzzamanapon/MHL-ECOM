@@ -122,6 +122,9 @@ use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendPro
 |
 */
 
+Route::post('/get_product_by_sku', [ProductController::class, 'get_product_by_sku']);
+
+
 
 Route::match(['get', 'post'], '/login', function () {
     return response()->json(['errors' => 'unauthenticated'], 401);
