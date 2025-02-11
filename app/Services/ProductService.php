@@ -765,12 +765,7 @@ class ProductService
                 }
                 $product_id = (int)$item['productId'];
                 $sku = (int)$item['variationSku'];
-                // $data[] =[
-                //     'sku' => $sku,
-                //     'product_id' => $product_id
-                // ];
 
-                // dd($product_id,$sku);
                 $product_data= Product::with('media', 'videos', 'category', 'unit', 'taxes')
                 ->withSum('stockItems', 'quantity')
                 ->where(['id' => $product_id, 'status' => Status::ACTIVE])
