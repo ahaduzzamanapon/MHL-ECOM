@@ -102,13 +102,11 @@ export const frontendCart = {
                                 }
                             }
                         });
-
                         if (!productMatch) {
                             isNew = true;
                         }
                         productMatch = false;
                     }
-
                     if (isNew) {
                         context.state.lists.push({
                             name: payload.name,

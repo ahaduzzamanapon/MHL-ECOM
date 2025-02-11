@@ -543,11 +543,9 @@ export default {
             this.temp.totalPrice = (this.temp.price * this.temp.quantity);
         },
         addToCart: function () {
-
             if (+this.temp.quantity < 1) {
                 return false;
             }
-
             this.enableAddToCardButton = true;
             this.productArray = {
                 name: this.temp.name,
@@ -564,7 +562,6 @@ export default {
                 price: this.temp.price,
                 old_price: this.temp.oldPrice,
                 total_price: this.temp.totalPric,
-                item_from:'add_to_cart'
 
             }
 
@@ -620,37 +617,61 @@ export default {
             }
         },
         buyNow: function () {
-
             if (+this.temp.quantity < 1) {
                 return false;
             }
 
-            this.enableAddToCardButton = true;
-            this.productArray = {
-                name: this.temp.name,
-                product_id: this.temp.productId,
-                image: this.temp.image,
-                variation_names: '',
-                variation_id: this.temp.variationId,
-                sku: this.temp.sku,
-                stock: this.temp.stock,
-                taxes: this.temp.taxes,
-                shipping: this.temp.shipping,
-                quantity: this.temp.quantity,
-                discount: this.temp.discount,
-                price: this.temp.price,
-                old_price: this.temp.oldPrice,
-                total_price: this.temp.totalPrice,
-                item_from:'buy_now'
-            }
+            this.$store.dispatch("frontendCart/resetCart").then(() => {
+                this.enableAddToCardButton = true;
+                this.productArray = {
+                    name: this.temp.name,
+                    product_id: this.temp.productId,
+                    image: this.temp.image,
+                    variation_names: '',
+                    variation_id: this.temp.variationId,
+                    sku: this.temp.sku,
+                    stock: this.temp.stock,
+                    taxes: this.temp.taxes,
+                    shipping: this.temp.shipping,
+                    quantity: this.temp.quantity,
+                    discount: this.temp.discount,
+                    price: this.temp.price,
+                    old_price: this.temp.oldPrice,
+                    total_price: this.temp.totalPrice,
+                }
 
-            if (this.selectedVariation) {
-                this.$store.dispatch("frontendProductVariation/ancestorsToString", this.selectedVariation.id).then((res) => {
-                    this.productArray.variation_names = res.data.data;
-                    this.variationComponent = false;
+                if (this.selectedVariation) {
+                    this.$store.dispatch("frontendProductVariation/ancestorsToString", this.selectedVariation.id).then((res) => {
+                        this.productArray.variation_names = res.data.data;
+                        this.variationComponent = false;
+                        this.$store.dispatch("frontendCart/lists", this.productArray).then((res) => {
+                            alertService.success(this.$t('message.add_to_cart'));
+                            this.variationComponent = true;
+                            this.productArray = {};
+                            this.selectedVariation = null;
+                            this.temp.isVariation = this.initProduct.isVariation;
+                            this.temp.variationId = this.initProduct.variationId;
+                            this.temp.sku = this.initProduct.sku;
+                            this.temp.stock = this.initProduct.stock;
+                            this.temp.quantity = this.initProduct.quantity;
+                            this.temp.discount = this.initProduct.discount;
+                            this.temp.price = this.initProduct.price;
+                            this.temp.oldPrice = this.initProduct.oldPrice;
+                            this.temp.totalPrice = this.initProduct.price;
+                            this.$router.push({ name: 'frontend.checkout.checkout' });
+                        }).catch((err) => {
+                            alertService.error(this.$t('message.maximum_quantity'));
+                            this.variationComponent = true;
+                            this.selectedVariation = null;
+                            this.temp.stock = this.initProduct.stock;
+                            this.temp.quantity = this.initProduct.quantity;
+                        });
+                    }).catch((err) => {
+                    });
+                } else {
                     this.$store.dispatch("frontendCart/lists", this.productArray).then((res) => {
                         alertService.success(this.$t('message.add_to_cart'));
-                        this.variationComponent = true;
+                        this.enableAddToCardButton = false;
                         this.productArray = {};
                         this.selectedVariation = null;
                         this.temp.isVariation = this.initProduct.isVariation;
@@ -662,39 +683,16 @@ export default {
                         this.temp.price = this.initProduct.price;
                         this.temp.oldPrice = this.initProduct.oldPrice;
                         this.temp.totalPrice = this.initProduct.price;
+                        this.$router.push({ name: 'frontend.checkout.checkout' });
                     }).catch((err) => {
                         alertService.error(this.$t('message.maximum_quantity'));
-                        this.variationComponent = true;
+                        this.enableAddToCardButton = false;
                         this.selectedVariation = null;
                         this.temp.stock = this.initProduct.stock;
                         this.temp.quantity = this.initProduct.quantity;
                     });
-                }).catch((err) => {
-                });
-            } else {
-                this.$store.dispatch("frontendCart/lists", this.productArray).then((res) => {
-                    alertService.success(this.$t('message.add_to_cart'));
-                    this.enableAddToCardButton = false;
-                    this.productArray = {};
-                    this.selectedVariation = null;
-                    this.temp.isVariation = this.initProduct.isVariation;
-                    this.temp.variationId = this.initProduct.variationId;
-                    this.temp.sku = this.initProduct.sku;
-                    this.temp.stock = this.initProduct.stock;
-                    this.temp.quantity = this.initProduct.quantity;
-                    this.temp.discount = this.initProduct.discount;
-                    this.temp.price = this.initProduct.price;
-                    this.temp.oldPrice = this.initProduct.oldPrice;
-                    this.temp.totalPrice = this.initProduct.price;
-                }).catch((err) => {
-                    alertService.error(this.$t('message.maximum_quantity'));
-                    this.enableAddToCardButton = false;
-                    this.selectedVariation = null;
-                    this.temp.stock = this.initProduct.stock;
-                    this.temp.quantity = this.initProduct.quantity;
-                });
-            }
-            router.push({ name: 'frontend.checkout.cartList' });
+                }
+            })
         }
     },
     watch: {
