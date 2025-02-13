@@ -8,7 +8,7 @@
                 <span class="capitalize whitespace-nowrap text-[15px]">{{ courier }}</span>
             </button>
         </div>
-        <div v-for="(courier, index) in couriers" :key="courier" class="db-card db-tab-sub-div" 
+        <div v-for="(courier, index) in couriers" :key="courier" class="db-card db-tab-sub-div"
             :class="index === selectIndex ? 'active' : 'hidden'">
             <div class="db-card-header">
                 <h3 class="db-card-title">{{ courier }}</h3>
@@ -56,7 +56,7 @@ export default {
         };
     },
     methods: {
-        save: function (index) {
+        save(index) {
             try {
                 this.loading.isActive = true;
                 alertService.success(`Saved successfully for ${this.couriers[index]}`);
@@ -66,9 +66,10 @@ export default {
                 alertService.error(err);
             }
         },
-        selectActive: function (index) {
+        selectActive(index) {
             this.selectIndex = index;
         }
     }
 };
 </script>
+

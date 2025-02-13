@@ -121,6 +121,7 @@
                 <i class="lab-line-license-code text-sm"></i>
                 {{ $t("menu.license") }}
             </router-link> -->
+        
             <router-link :to="{ name: 'admin.settings.courier' }" class="db-tab-btn">
                 <i class="lab-line-license-code text-sm"></i>
                 Courier Setup

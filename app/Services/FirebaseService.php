@@ -57,7 +57,6 @@ class FirebaseService
                 return $result->getBody()->getContents();
             }
         } catch (Exception $e) {
-            dd($e->getMessage());
             Log::info($e->getMessage());
             return $e->getMessage();
         }
@@ -126,23 +125,23 @@ class FirebaseService
             if (empty($fcmTokens)) {
                 throw new Exception("FCM Tokens are required");
             }
-    
+
             // Retrieve notification settings
             $notification = Settings::group('notification')->all();
             $url = 'https://fcm.googleapis.com/v1/projects/' . $notification['notification_fcm_project_id'] . '/messages:send';
             $accessToken = $this->getAccessToken();
-            
+
             // Check if access token is valid
             if (empty($accessToken)) {
                 throw new Exception("Access Token is invalid");
             }
-    
+
             $client = new Client();
             $headers = [
                 'Authorization' => 'Bearer ' . $accessToken,
                 'Content-Type'  => 'application/json',
             ];
-    
+
             // Prepare notification payload for multiple tokens
             $payload = [
                 'messages' => array_map(function ($token) use ($data, $topicName) {
@@ -168,21 +167,20 @@ class FirebaseService
                     ];
                 }, $fcmTokens),
             ];
-    
+
             // Send POST request to FCM
             $result = $client->post($url, [
                 'headers' => $headers,
                 'body'    => json_encode($payload),
             ]);
-    
+
             return $result->getBody()->getContents();
         } catch (Exception $e) {
-            dd($e->getMessage());
             Log::error("FCM Notification Error: " . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
+
 
 
     function getAccessToken()
