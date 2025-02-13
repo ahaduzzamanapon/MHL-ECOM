@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('couriers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('data');
+            $table->string('api_key');
+            $table->string('secret_key');
             $table->timestamps();
         });
     }

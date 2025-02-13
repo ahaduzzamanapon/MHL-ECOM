@@ -9,6 +9,7 @@ import {otp} from "./modules/otp";
 import {notification} from "./modules/notification";
 import {socialMedia} from "./modules/socialMedia";
 import {license} from "./modules/license";
+import {courier} from "./modules/courier";
 import {cookies} from "./modules/cookies";
 import {page} from "./modules/page";
 import {analytic} from "./modules/analytic";
