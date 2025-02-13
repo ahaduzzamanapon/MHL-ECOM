@@ -436,7 +436,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(func
         Route::prefix('courier')->name('courier.')->group(function () {
             Route::get('/', [CourierController::class, 'index']);
             Route::get('/show/{courier}', [CourierController::class, 'show']);
-            Route::post('/', [CourierController::class, 'store']);
+            Route::post('/insert', [CourierController::class, 'store']);
             Route::match(['put', 'patch'], '/{courier}', [CourierController::class, 'update']);
             Route::delete('/{courier}', [CourierController::class, 'destroy']);
         });

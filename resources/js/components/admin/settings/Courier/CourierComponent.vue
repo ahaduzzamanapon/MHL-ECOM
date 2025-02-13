@@ -3,8 +3,8 @@
     <div id="courier" class="db-tab-div active">
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-5">
             <button v-for="(courier, index) in couriers" :key="courier" @click="selectActive(index)"
-                class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition bg-white"
-                :class="index === selectIndex ? 'text-white bg-primary' : 'bg-white hover:text-primary hover:bg-primary/5'">
+                class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition"
+                :class="index === selectIndex ? 'bg-primary text-white' : 'bg-white hover:text-primary hover:bg-primary/5'">
                 <span class="capitalize whitespace-nowrap text-[15px]">{{ courier }}</span>
             </button>
         </div>
@@ -18,8 +18,14 @@
                     <div class="form-row">
                         <input type="hidden" :value="courier" name="courier">
                         <div class="form-col-12">
-                            <label :for="'input' + index" class="db-field-title">Enter {{ courier }} Data</label>
-                            <input type="text" v-model="courierInputs[index]" :id="'input' + index" class="db-field-control" />
+                            <label :for="'api_key' + index" class="db-field-title">API Key</label>
+                            <input type="text" v-model="courierInputs[index].api_key" :id="'api_key' + index"
+                                class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
+                            <label :for="'secret_key' + index" class="db-field-title">Secret Key</label>
+                            <input type="text" v-model="courierInputs[index].secret_key" :id="'secret_key' + index"
+                                class="db-field-control" />
                         </div>
                         <div class="form-col-12 mt-3">
                             <button type="submit" :id="'formButton' + index" class="db-btn text-white bg-primary">
@@ -37,6 +43,7 @@
 <script>
 import LoadingComponent from "../../components/LoadingComponent";
 import alertService from "../../../../services/alertService";
+import axios from "axios";
 
 export default {
     name: "CourierComponent",
@@ -52,22 +59,40 @@ export default {
                 "Redex",
                 "Pathao",
             ],
-            courierInputs: ["", "", ""]
+            courierInputs: [
+                { api_key: "", secret_key: "" },
+                { api_key: "", secret_key: "" },
+                { api_key: "", secret_key: "" }
+            ]
         };
     },
     methods: {
-        save(index) {
-            try {
-                this.loading.isActive = true;
-                alertService.success(`Saved successfully for ${this.couriers[index]}`);
-                this.loading.isActive = false;
-            } catch (err) {
-                this.loading.isActive = false;
-                alertService.error(err);
-            }
-        },
         selectActive(index) {
             this.selectIndex = index;
+        },
+        save(index) {
+            this.loading.isActive = true;
+            axios.post("admin/setting/courier/insert", {
+                type: "courier",
+                value: this.courierInputs[index],
+                key: this.couriers[index]
+            }).then((response) => {
+                this.loading.isActive = false;
+                if (response.data.success) {
+                    alertService.success(response.data.message);
+                } else if (response.data.errors) {
+                    alertService.error(response.data.errors);
+                } else {
+                    alertService.error(response.data.message);
+                }
+            }).catch(error => {
+                this.loading.isActive = false;
+                if (error.response.data.errors) {
+                    alertService.error(error.response.data.errors);
+                } else {
+                    alertService.error(error.response.data.message);
+                }
+            });
         }
     }
 };
