@@ -23,12 +23,25 @@ class CourierController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $courier = Courier::create($request->all());
-            return response()->json($courier);
-        } catch (ValidationException $exception) {
-            return response(['status' => false, 'message' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $input=$request->all();
+        $name=$input['key'];
+        $Courier=Courier::where('name','=',$name)->first();
+        if($Courier){
+            $Courier->api_key=$input['value']['api_key'];
+            $Courier->secret_key=$input['value']['secret_key'];
+            $Courier->save();
+        }else{
+            $Courier=new Courier();
+            $Courier->name=$name;
+            $Courier->api_key=$input['value']['api_key'];
+            $Courier->secret_key=$input['value']['secret_key'];
+            $Courier->save();
         }
+        return response()->json([
+            'success' => true,
+            'message' => 'Courier Updated Successfully',
+        ]);
+
     }
 
     /**
