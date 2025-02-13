@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\CourierController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UnitController;
@@ -432,6 +433,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(func
             Route::match(['put', 'patch'], '/{outlet}', [OutletController::class, 'update']);
             Route::delete('/{outlet}', [OutletController::class, 'destroy']);
         });
+        Route::prefix('courier')->name('courier.')->group(function () {
+            Route::get('/', [CourierController::class, 'index']);
+            Route::get('/show/{courier}', [CourierController::class, 'show']);
+            Route::post('/', [CourierController::class, 'store']);
+            Route::match(['put', 'patch'], '/{courier}', [CourierController::class, 'update']);
+            Route::delete('/{courier}', [CourierController::class, 'destroy']);
+        });
+
     });
 
     Route::prefix('product')->name('product.')->group(function () {

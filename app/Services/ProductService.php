@@ -780,21 +780,25 @@ class ProductService
                     $products[] = [
                         'product_data' => $product_data,
                         'stock_quantity' => $stockQuantity,
-                        'attr' => null
+                        'attr' => null,
+                        'variation' => null
                     ];
                     continue;
                 }
                 $attr=[];
                 $attr[ProductAttribute::find($ProductVariation->product_attribute_id)->name]= ProductAttributeOption::find($ProductVariation->product_attribute_option_id)->name;
+                $last_variation = null;
                 while ($ProductVariation->parent_id != null) {
                     $ProductVariation = ProductVariation::where('id', $ProductVariation->parent_id)->first();
                     $attr[ProductAttribute::find($ProductVariation->product_attribute_id)->name]= ProductAttributeOption::find($ProductVariation->product_attribute_option_id)->name;
+                    $last_variation = $ProductVariation;
                 }
                 $attr = array_reverse($attr);
                 $products[] = [
                     'product_data' => $product_data,
                     'stock_quantity' => $stockQuantity,
-                    'attr' => $attr
+                    'attr' => $attr,
+                    'variation' => $last_variation
                 ];
             }
             return $products;

@@ -33,6 +33,7 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request): \Illuminate\Http\Response | OrderDetailsResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
+        dd($request->all());
         try {
             return new OrderDetailsResource($this->frontendOrderService->myOrderStore($request));
         } catch (Exception $exception) {
