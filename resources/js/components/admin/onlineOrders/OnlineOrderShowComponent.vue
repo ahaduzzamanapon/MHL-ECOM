@@ -117,7 +117,7 @@
                                             <div class="flex items-center gap-8">
                                                 <span class="text-sm font-semibold">{{
                                                     product.subtotal_currency_price
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -171,6 +171,28 @@
                             {{ order.total_currency_price }}
                         </h5>
                     </div>
+                </div>
+            </div>
+            <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
+
+                <div class="db-card p-1">
+                    <h3 class="db-card-title">
+                        Select Courier
+                    </h3>
+                    <div class="flex items-center gap-3 p-3">
+                        <select id="courier_select_option"
+                            class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
+                            <option value="" selected>Select Courier</option>
+                            <option v-for="couriers in couriers" :value="couriers">
+                                {{ couriers }}
+                            </option>
+                        </select>
+                        <button type="button" @click="sendCourier($event)"
+                            class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
+                            Send
+                        </button>
+                    </div>
+
                 </div>
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress.length > 0"
@@ -270,6 +292,8 @@ import orderTypeEnum from "../../../enums/modules/orderTypeEnum";
 import alertService from "../../../services/alertService";
 import OnlineOrderReasonComponent from "./OnlineOrderReasonComponent";
 import OnlineOrderReceiptComponent from "./OnlineOrderReceiptComponent";
+import axios from "axios";
+
 
 export default {
     name: "OnlineOrderShowComponent",
@@ -286,6 +310,7 @@ export default {
             payment_status: null,
             delivery_boy: null,
             order_status: null,
+            couriers: [],
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
                 addressTypeEnum: addressTypeEnum,
@@ -344,6 +369,9 @@ export default {
             }
         }
     },
+    created() {
+        this.fetchCouriers();
+    },
     computed: {
         order: function () {
             return this.$store.getters['onlineOrder/show'];
@@ -360,6 +388,7 @@ export default {
         outletAddress: function () {
             return this.$store.getters['onlineOrder/outletAddress'];
         },
+
     },
     mounted() {
         this.loading.isActive = true;
@@ -377,6 +406,15 @@ export default {
         },
         orderStatusClass: function (status) {
             return appService.orderStatusClass(status);
+        },
+        fetchCouriers() {
+            axios.get("admin/setting/courier")
+                .then(response => {
+                    this.couriers = response.data.map(item => item.name);
+                })
+                .catch(error => {
+                    alertService.error(error.message);
+                });
         },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
@@ -449,6 +487,12 @@ export default {
                 alertService.error(err.response.data.message);
             }
         },
+        sendCourier: function () {
+            const courier = document.querySelector("#courier_select_option").value;
+            console.log(courier);
+
+        }
+
     }
 
 }
