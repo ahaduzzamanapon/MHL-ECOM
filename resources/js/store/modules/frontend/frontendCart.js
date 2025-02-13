@@ -81,6 +81,7 @@ export const frontendCart = {
         },
         lists: function (context, payload) {
             return new Promise((resolve, reject) => {
+
                 if (Object.keys(payload).length > 0) {
                     let isNew        = false;
                     let productMatch = false;
@@ -88,6 +89,7 @@ export const frontendCart = {
                         isNew = true;
                     } else {
                         _.forEach(context.state.lists, (list, listKey) => {
+                            console.log(list);
                             if (list.product_id === payload.product_id && list.variation_id === payload.variation_id) {
                                 productMatch = true;
                                 if ((payload.quantity + list.quantity) <= list.stock) {
@@ -100,13 +102,11 @@ export const frontendCart = {
                                 }
                             }
                         });
-
                         if (!productMatch) {
                             isNew = true;
                         }
                         productMatch = false;
                     }
-
                     if (isNew) {
                         context.state.lists.push({
                             name: payload.name,
@@ -125,7 +125,8 @@ export const frontendCart = {
                             total_tax: 0,
                             subtotal: 0,
                             total: 0,
-                            total_price: payload.total_price
+                            total_price: payload.total_price,
+                            from: payload.item_from,
                         });
                         isNew = false;
                     }
@@ -213,6 +214,8 @@ export const frontendCart = {
                 let subtotal = 0;
                 let total    = 0;
                 _.forEach(state.lists, (list, listKey) => {
+                    console.log('list');
+                    console.log(list);
                     state.lists[listKey].subtotal = state.lists[listKey].price * state.lists[listKey].quantity;
                     state.lists[listKey].total    = ((state.lists[listKey].price * state.lists[listKey].quantity) + state.lists[listKey].total_tax) - state.lists[listKey].discount;
                     subtotal                      += state.lists[listKey].subtotal;

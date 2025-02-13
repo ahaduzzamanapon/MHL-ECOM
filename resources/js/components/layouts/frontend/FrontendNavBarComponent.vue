@@ -404,7 +404,6 @@ export default {
             if (globalState.language_id > 0) {
                 this.defaultLanguage = globalState.language_id;
             }
-
             this.loading.isActive = false;
             this.$store.dispatch('frontendLanguage/lists', this.languageProps).then().catch();
             this.$store.dispatch('frontendLanguage/show', this.defaultLanguage).then(res => {
@@ -429,7 +428,6 @@ export default {
                         measurementId: res.data.data.notification_fcm_measurement_id
                     });
                     const messaging = getMessaging();
-
                     Notification.requestPermission().then((permission) => {
                         if (permission === 'granted') {
                             getToken(messaging, { vapidKey: res.data.data.notification_fcm_public_vapid_key }).then((currentToken) => {

@@ -32,6 +32,7 @@ import LanguageListComponent from "../../components/admin/settings/Language/Lang
 import LanguageShowComponent from "../../components/admin/settings/Language/LanguageShowComponent";
 import SmsGatewayComponent from "../../components/admin/settings/SmsGateway/SmsGatewayComponent";
 import PaymentGatewayComponent from "../../components/admin/settings/PaymentGateway/PaymentGatewayComponent";
+import CourierComponent from "../../components/admin/settings/Courier/CourierComponent";
 import RoleComponent from "../../components/admin/settings/Role/RoleComponent";
 import RoleListComponent from "../../components/admin/settings/Role/RoleListComponent";
 import RoleShowComponent from "../../components/admin/settings/Role/RoleShowComponent";
@@ -49,7 +50,7 @@ import SupplierShowComponent from "../../components/admin/settings/Supplier/Supp
 import ShippingSetupComponent from "../../components/admin/settings/ShippingSetup/ShippingSetupComponent";
 import NotificationAlertComponent from "../../components/admin/settings/NotificationAlert/NotificationAlertComponent";
 import ReturnReasonComponent from "../../components/admin/settings/ReturnReason/ReturnReasonComponent"
-import ReturnReasonListComponent from "../../components/admin/settings/ReturnReason/ReturnReasonListComponent"; 
+import ReturnReasonListComponent from "../../components/admin/settings/ReturnReason/ReturnReasonListComponent";
 import OutletComponent from "../../components/admin/settings/Outlet/OutletComponent";
 import OutletListComponent from "../../components/admin/settings/Outlet/OutletListComponent";
 import OutletShowComponent from "../../components/admin/settings/Outlet/OutletShowComponent";
@@ -717,6 +718,17 @@ export default [
                 }
             },
             {
+                path: "courier",
+                component: CourierComponent,
+                name: "admin.settings.courier",
+                meta: {
+                    isFrontend: false,
+                    auth: true,
+                    permissionUrl: "settings",
+                    breadcrumb: "courier",
+                }
+            },
+            {
                 path: "location-setup",
                 component: LocationSetupComponent,
                 name: "admin.settings.locationSetup",
@@ -763,7 +775,7 @@ export default [
                     },
                 ],
             },
-            
+
         ],
     },
 ];

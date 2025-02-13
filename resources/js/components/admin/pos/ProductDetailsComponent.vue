@@ -66,7 +66,7 @@
                 <dd class="flex items-center gap-6">
                     <div class="flex items-center gap-1 w-20 p-1 rounded-full bg-[#F7F7FC]">
                         <button @click.prevent="quantityDecrement" type="button" :class="temp.quantity === 1 ? 'cursor-not-allowed': ''"
-                            class="lab-fill-circle-minus text-lg leading-none transition-all duration-300 hover:text-primary"></button>
+                            class="lab-fill-circle-minus text-lg ghleading-none transition-all duration-300 hover:text-primary"></button>
                         <input type="number" v-model="temp.quantity" v-on:keypress="onlyNumber($event)"
                             v-on:keyup="quantityUp" class="text-center w-full h-5 text-sm font-medium">
                         <button @click.prevent="quantityIncrement" type="button" :class="temp.stock === temp.quantity ? 'cursor-not-allowed': ''"

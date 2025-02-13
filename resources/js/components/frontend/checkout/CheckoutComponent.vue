@@ -41,7 +41,6 @@
                         </small>
                     </router-link>
                 </li>
-
                 <li
                     class="list-none w-full flex after:content-[''] after:w-full after:h-1 last:after:hidden last:w-fit after:bg-[#EFF0F6]">
                     <router-link :to="{ name: 'frontend.checkout.payment' }"

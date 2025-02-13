@@ -117,9 +117,13 @@
                 <i class="lab lab-line-payment-gateway text-sm"></i>
                 {{ $t("menu.payment_gateway") }}
             </router-link>
-            <router-link :to="{ name: 'admin.settings.license' }" class="db-tab-btn">
+            <!-- <router-link :to="{ name: 'admin.settings.license' }" class="db-tab-btn">
                 <i class="lab-line-license-code text-sm"></i>
                 {{ $t("menu.license") }}
+            </router-link> -->
+            <router-link :to="{ name: 'admin.settings.courier' }" class="db-tab-btn">
+                <i class="lab-line-license-code text-sm"></i>
+                Courier Setup
             </router-link>
         </nav>
     </div>

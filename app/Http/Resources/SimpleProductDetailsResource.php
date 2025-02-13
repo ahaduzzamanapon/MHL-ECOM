@@ -15,6 +15,7 @@ class SimpleProductDetailsResource extends JsonResource
 
     public function toArray($request): array
     {
+        
         $price = count($this->variations) > 0 ? $this->variation_price : $this->selling_price;
         return [
             'id'                  => $this->id,
