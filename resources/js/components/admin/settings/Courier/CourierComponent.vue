@@ -63,6 +63,7 @@ export default {
     },
     methods: {
         fetchCouriers() {
+            this.loading.isActive = true;
             axios.get("admin/setting/courier")
                 .then(response => {
                     this.couriers = response.data.map(item => item.name);
@@ -70,6 +71,7 @@ export default {
                         api_key: item.api_key,
                         secret_key: item.secret_key
                     }));
+                    this.loading.isActive = false;
                 })
                 .catch(error => {
                     alertService.error(error.message);
