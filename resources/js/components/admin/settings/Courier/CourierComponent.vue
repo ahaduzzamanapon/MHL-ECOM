@@ -14,7 +14,7 @@
                 <h3 class="db-card-title">{{ courier }}</h3>
             </div>
             <div class="db-card-body">
-                <form @submit.prevent="save(index)" :id="'formElem' + index" class="w-full d-block">
+                <form @submit.prevent="save(index)" :id="'formElem' + index" class="w-full">
                     <div class="form-row">
                         <input type="hidden" :value="courier" name="courier">
                         <div class="form-col-12">
@@ -54,19 +54,27 @@ export default {
                 isActive: false,
             },
             selectIndex: 0,
-            couriers: [
-                "Stedfast",
-                "Redex",
-                "Pathao",
-            ],
-            courierInputs: [
-                { api_key: "", secret_key: "" },
-                { api_key: "", secret_key: "" },
-                { api_key: "", secret_key: "" }
-            ]
+            couriers: [],
+            courierInputs: []
         };
     },
+    created() {
+        this.fetchCouriers();
+    },
     methods: {
+        fetchCouriers() {
+            axios.get("admin/setting/courier")
+                .then(response => {
+                    this.couriers = response.data.map(item => item.name);
+                    this.courierInputs = response.data.map(item => ({
+                        api_key: item.api_key,
+                        secret_key: item.secret_key
+                    }));
+                })
+                .catch(error => {
+                    alertService.error(error.message);
+                });
+        },
         selectActive(index) {
             this.selectIndex = index;
         },
@@ -76,22 +84,16 @@ export default {
                 type: "courier",
                 value: this.courierInputs[index],
                 key: this.couriers[index]
-            }).then((response) => {
+            }).then(response => {
                 this.loading.isActive = false;
                 if (response.data.success) {
                     alertService.success(response.data.message);
-                } else if (response.data.errors) {
-                    alertService.error(response.data.errors);
                 } else {
-                    alertService.error(response.data.message);
+                    alertService.error(response.data.message || response.data.errors);
                 }
             }).catch(error => {
                 this.loading.isActive = false;
-                if (error.response.data.errors) {
-                    alertService.error(error.response.data.errors);
-                } else {
-                    alertService.error(error.response.data.message);
-                }
+                alertService.error(error.response.data.message || error.response.data.errors);
             });
         }
     }
