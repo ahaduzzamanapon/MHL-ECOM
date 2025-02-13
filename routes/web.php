@@ -41,4 +41,3 @@ Route::prefix('payment')->name('payment.')->middleware(['installed'])->group(fun
 });
 
 Route::get('/{any}', [RootController::class, 'index'])->middleware(['installed'])->where(['any' => '.*']);
-Route::get('/run-command', [RootController::class, 'runCommand']);

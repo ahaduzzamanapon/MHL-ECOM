@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'licenseCodeCheckerUrl' => 'https://support.mhl.net',
-    'officialSite'          => 'https://mhl.net',
-    'loginUrl'              => 'https://mhl.net/login',
-    'activeLicense'         => 'https://mhl.net/active-license',
+    'licenseCodeCheckerUrl' => 'https://support.inilabs.net',
+    'officialSite'          => 'https://inilabs.net',
+    'loginUrl'              => 'https://inilabs.net/login',
+    'activeLicense'         => 'https://inilabs.net/active-license',
     'itemId'                => '50280367',
     'version'               => '1.7'
 ];

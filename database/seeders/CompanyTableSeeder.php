@@ -19,7 +19,7 @@ class CompanyTableSeeder extends Seeder
     {
         Settings::group('company')->set([
             'company_name'         => 'ShopKing - eCommerce App with Laravel Website & Admin Panel with POS | Inventory Management',
-            'company_email'        => 'info@mhl.net',
+            'company_email'        => 'info@inilabs.net',
             'company_calling_code' => '+880',
             'company_phone'        => '13333846282',
             'company_website'      => 'https://foodking.dev',
