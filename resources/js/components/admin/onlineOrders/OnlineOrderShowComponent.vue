@@ -488,11 +488,17 @@ export default {
             }
         },
         sendCourier: function () {
-            const courier = document.querySelector("#courier_select_option").value;
-            console.log(courier);
-
+            this.loading.isActive = true;
+            const selectedCourier = document.querySelector("#courier_select_option").value;
+            axios.post("admin/setting/courier", {
+                courier: selectedCourier
+            }).then(response => {
+                this.loading.isActive = false;
+            }).catch(error => {
+                this.loading.isActive = false;
+                alertService.error(error.message);
+            });
         }
-
     }
 
 }
