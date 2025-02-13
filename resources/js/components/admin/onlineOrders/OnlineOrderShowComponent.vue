@@ -490,10 +490,16 @@ export default {
         sendCourier: function () {
             this.loading.isActive = true;
             const selectedCourier = document.querySelector("#courier_select_option").value;
-            axios.post("admin/setting/courier", {
+            if (!selectedCourier || selectedCourier === "") {
+                this.loading.isActive = false;
+                alertService.error("Please select a courier");
+                return;
+            }
+            axios.post("admin/online-order/sendCourier", {
                 courier: selectedCourier
             }).then(response => {
                 this.loading.isActive = false;
+                alertService.successFlip("Order sent to courier Successfully");
             }).catch(error => {
                 this.loading.isActive = false;
                 alertService.error(error.message);

@@ -11,6 +11,7 @@ use App\Http\Requests\PaginateRequest;
 use App\Http\Requests\OrderStatusRequest;
 use App\Http\Requests\PaymentStatusRequest;
 use App\Http\Resources\OrderDetailsResource;
+use Illuminate\Http\Request;
 
 class OnlineOrderController extends AdminController
 {
@@ -33,6 +34,19 @@ class OnlineOrderController extends AdminController
     {
         try {
             return OrderDetailsResource::collection($this->orderService->list($request));
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
+    public function sendCourier(Request $request): \Illuminate\Http\Response | \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    {
+        try {
+            $data=$this->orderService->sendCourier($request);
+            if($data){
+                return response(['status' => true, 'message' => "Order sent to courier Successfully"], 200);
+            }else{
+                return response(['status' => false, 'message' => "Something went wrong"], 422);
+            }
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
