@@ -174,17 +174,38 @@
                 </div>
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
+                <div v-if="isInfoAvailable()"  class="db-card p-1">
+                    <h3 class="db-card-title">Infos</h3>
+                    <div class="grid grid-cols-2 gap-3 p-3">
+                        <div class="text-sm capitalize font-semibold">Consignment ID:</div>
+                        <div class="text-sm capitalize">{{ info.consignment_id }}</div>
+                        <div class="text-sm capitalize font-semibold">Invoice:</div>
+                        <div class="text-sm capitalize">{{ info.invoice }}</div>
+                        <div class="text-sm capitalize font-semibold">Tracking Code:</div>
+                        <div class="text-sm capitalize">{{ info.tracking_code }}</div>
+                        <div class="text-sm capitalize font-semibold">Recipient Name:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_name }}</div>
+                        <div class="text-sm capitalize font-semibold">Recipient Phone:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_phone }}</div>
+                        <div class="text-sm capitalize font-semibold">Recipient Address:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_address }}</div>
+                        <div class="text-sm capitalize font-semibold">COD Amount:</div>
+                        <div class="text-sm capitalize">{{ info.cod_amount }}</div>
+                        <div class="text-sm capitalize font-semibold">Status:</div>
+                        <div class="text-sm capitalize">{{ info.status }}</div>
+                        <div class="text-sm capitalize font-semibold">Note:</div>
+                        <div class="text-sm capitalize">{{ info.note }}</div>
+                    </div>
+                </div>
 
-                <div class="db-card p-1">
-                    <h3 class="db-card-title">
-                        Select Courier
-                    </h3>
+                <div v-else class="db-card p-1">
+                    <h3 class="db-card-title">Select Courier</h3>
                     <div class="flex items-center gap-3 p-3">
                         <select id="courier_select_option"
                             class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
                             <option value="" selected>Select Courier</option>
-                            <option v-for="couriers in couriers" :value="couriers">
-                                {{ couriers }}
+                            <option v-for="courier in couriers" :value="courier">
+                                {{ courier }}
                             </option>
                         </select>
                         <button type="button" @click="sendCourier($event)"
@@ -192,7 +213,6 @@
                             Send
                         </button>
                     </div>
-
                 </div>
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress.length > 0"
@@ -293,6 +313,7 @@ import alertService from "../../../services/alertService";
 import OnlineOrderReasonComponent from "./OnlineOrderReasonComponent";
 import OnlineOrderReceiptComponent from "./OnlineOrderReceiptComponent";
 import axios from "axios";
+import { info } from "autoprefixer";
 
 
 export default {
@@ -311,6 +332,7 @@ export default {
             delivery_boy: null,
             order_status: null,
             couriers: [],
+            info: [],
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
                 addressTypeEnum: addressTypeEnum,
@@ -371,6 +393,7 @@ export default {
     },
     created() {
         this.fetchCouriers();
+        this.checkCourierStatus();
     },
     computed: {
         order: function () {
@@ -392,7 +415,10 @@ export default {
     },
     mounted() {
         this.loading.isActive = true;
+        this.checkCourierStatus();
         this.$store.dispatch('onlineOrder/show', this.$route.params.id).then(res => {
+            // console.log(res);
+            
             this.payment_status = res.data.data.payment_status;
             this.order_status = res.data.data.status;
             this.loading.isActive = false;
@@ -415,6 +441,28 @@ export default {
                 .catch(error => {
                     alertService.error(error.message);
                 });
+        },
+        checkCourierStatus() {
+            axios.get("admin/online-order/checkCourierStatus/" + this.$route.params.id)
+            .then(response => {
+                this.info = response.data.data;
+                // const courierInfo = document.getElementById('courier_info');
+                // const courierSelect = document.getElementById('courier_select');
+                // if (this.info != null) {
+                //     courierInfo.style.display   = 'block';
+                //     courierSelect.style.display = 'none';
+                // } else {
+                //     courierInfo.style.display   = 'none';
+                //     courierSelect.style.display = 'block';
+                // }
+            })
+            .catch(error => {
+                console.error("Axios Error:", error);
+                // alertService.error(error.message);
+            });
+        },
+        isInfoAvailable() {
+        return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
         },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
