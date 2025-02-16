@@ -25,7 +25,9 @@ class Order extends Model
         'payment_status',
         'status',
         'reason',
-        'source'
+        'source',
+        'courier_id',
+        'courier_type'
     ];
 
     protected $casts = [

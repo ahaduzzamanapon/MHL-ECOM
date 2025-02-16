@@ -12,6 +12,8 @@ use App\Models\Order;
 use App\Models\Stock;
 use App\Enums\OrderType;
 use App\Models\StockTax;
+use App\Models\OrderAddress;
+use App\Models\SteadfastCourier as SteadfastCourierModel;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Events\SendOrderSms;
@@ -24,6 +26,10 @@ use App\Http\Requests\PaginateRequest;
 use App\Http\Requests\PosOrderRequest;
 use App\Http\Requests\OrderStatusRequest;
 use App\Http\Requests\PaymentStatusRequest;
+use SteadFast\SteadFastCourierLaravelPackage\Facades\SteadfastCourier;
+use App\Http\Resources\OrderDetailsResource;
+
+
 
 class OrderService
 {
@@ -255,7 +261,63 @@ class OrderService
             throw new Exception($exception->getMessage(), 422);
         }
     }
+    public function sendCourier($req)
+    {
+        $courier=$req->courier;
+        $order_id=$req->id;
+        $order_details=Order::where('id',$order_id)->first();
+        $order_addresses=OrderAddress::where('order_id',$order_id)->first();
+        if($order_details->payment_method==1){
+            $payment_amount=$order_details->total;
+            $note="Cash on Delivery";
+        }else{
+            $payment_amount=0;
+            $note="Online Payment";
+        }
+        if ($courier == "Stedfast") {
 
+                $orderData =[
+                    'invoice' => $order_details->order_serial_no,
+                    'recipient_name' => $order_addresses->full_name,
+                    'recipient_phone' => $order_addresses->country_code.$order_addresses->phone,
+                    'recipient_address' => $order_addresses->address.', '.$order_addresses->city.', '.$order_addresses->state.', '.$order_addresses->country.', '.$order_addresses->zip_code,
+                    'cod_amount' => $payment_amount,
+                    'note' => $note
+                ];
+                $response = SteadfastCourier::placeOrder($orderData);
+                if ($response['status'] == 200) {
+                    try {
+                        $Stedfast=new SteadfastCourierModel();
+                        $Stedfast->consignment_id=$response['consignment']['consignment_id'];
+                        $Stedfast->invoice=$response['consignment']['invoice'];
+                        $Stedfast->tracking_code=$response['consignment']['tracking_code'];
+                        $Stedfast->recipient_name=$response['consignment']['recipient_name'];
+                        $Stedfast->recipient_phone=$response['consignment']['recipient_phone'];
+                        $Stedfast->recipient_address=$response['consignment']['recipient_address'];
+                        $Stedfast->cod_amount=$response['consignment']['cod_amount'];
+                        $Stedfast->status=$response['consignment']['status'];
+                        $Stedfast->note=$response['consignment']['note'];
+                        $Stedfast->save();
+                        $order=Order::where('id',$order_id)->first();
+                        $order->courier_id=$Stedfast->id;
+                        $order->courier_type='Stedfast';
+                        $order->save();
+                        return ['status' => true, 'message' => "Order sent to courier Successfully"];
+                    } catch (\Throwable $th) {
+                        return ['status' => false, 'message' => $th->getMessage()];
+                    }
+                }else{
+                    $error='';
+                    foreach ($response['errors'] as $key => $value) {
+                        $error.=$value[0].', ';
+                    }
+                    return ['status' => false, 'message' => $error];
+                }
+
+        }else{
+            return ['status' => false, 'message' => "Courier not supported"];
+        }
+    }
     /**
      * @throws Exception
      */

@@ -1,8 +1,7 @@
 <template>
     <LoadingComponent :props="loading" />
-    <div class="w-full max-w-3xl mx-auto rounded-2xl flex overflow-hidden gap-y-6 bg-white shadow-card mb-24 !sm:mb-0">
-        <img :src="APP_URL + '/images/required/auth.jpg'" alt="banners"
-            class="w-full hidden sm:block sm:max-w-xs md:max-w-sm flex-shrink-0">
+    <div class="w-full max-w-xl mx-auto rounded-2xl flex overflow-hidden gap-y-6 bg-white shadow-card mb-24 !sm:mb-0">
+
         <form class="w-full p-6" @submit.prevent="login">
             <div class="text-center mb-8">
                 <h3 class="capitalize text-2xl mb-2 font-bold text-primary">{{ $t('label.sign_in') }}</h3>
@@ -185,15 +184,20 @@ export default {
             try {
                 this.loading.isActive = true;
                 this.$store.dispatch('login', this.form).then((res) => {
+
                     this.loading.isActive = false;
                     alertService.success(res.data.message);
                     this.$store.dispatch("frontendWishlist/lists").then().catch();
-                    if (this.carts.length > 0) {
-                        router.push({ name: "frontend.checkout" });
-                    } else {
+                    if(res.data.user['role_id']==1){
+                        router.push({ name: "admin.dashboard" });
+                    }else{
+                        if (this.carts.length > 0) {
+                            router.push({ name: "frontend.checkout" });
+                        } else {
+                            router.push({ name: "frontend.home" });
+                        }
                         router.push({ name: "frontend.home" });
                     }
-                    router.push({ name: "frontend.home" });
                 }).catch((err) => {
                     this.loading.isActive = false;
                     this.errors = err.response.data.errors;
