@@ -41,12 +41,7 @@ class OnlineOrderController extends AdminController
     public function sendCourier(Request $request): \Illuminate\Http\Response | \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            $data=$this->orderService->sendCourier($request);
-            if($data){
-                return response(['status' => true, 'message' => "Order sent to courier Successfully"], 200);
-            }else{
-                return response(['status' => false, 'message' => "Something went wrong"], 422);
-            }
+            return response($this->orderService->sendCourier($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }

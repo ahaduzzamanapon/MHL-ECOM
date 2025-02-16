@@ -496,11 +496,17 @@ export default {
                 return;
             }
             axios.post("admin/online-order/sendCourier", {
-                courier: selectedCourier
+                courier: selectedCourier,
+                id: this.$route.params.id,
             }).then(response => {
                 this.loading.isActive = false;
-                alertService.successFlip("Order sent to courier Successfully");
+                if(response.data['status']){
+                    alertService.success(response.data['message']);
+                }else{
+                    alertService.error(response.data['message']);
+                };
             }).catch(error => {
+
                 this.loading.isActive = false;
                 alertService.error(error.message);
             });
