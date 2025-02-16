@@ -274,8 +274,7 @@ class OrderService
             $payment_amount=0;
             $note="Online Payment";
         }
-        if ($courier == "Stedfast") {
-
+        if ($courier == "Steadfast") {
                 $orderData =[
                     'invoice' => $order_details->order_serial_no,
                     'recipient_name' => $order_addresses->full_name,
