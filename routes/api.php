@@ -690,6 +690,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(func
         Route::post('/change-status/{order}', [OnlineOrderController::class, 'changeStatus']);
         Route::post('/change-payment-status/{order}', [OnlineOrderController::class, 'changePaymentStatus']);
         Route::post('/sendCourier', [OnlineOrderController::class, 'sendCourier']);
+        Route::get('/checkCourierStatus/{order_id}', [OnlineOrderController::class, 'checkCourierStatus']);
     });
 
     Route::prefix('products-report')->name('products-report.')->group(function () {

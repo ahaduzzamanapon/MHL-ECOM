@@ -99,4 +99,24 @@ class OnlineOrderController extends AdminController
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+
+    public function checkCourierStatus(Request $request): \Illuminate\Http\Response | OrderDetailsResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    {
+        $order = Order::where('id', $request->order_id)->first();
+        // dd($order->courier_id);
+        try {
+            if ($order->courier_id != null && $order->courier_type == 'Steadfast') { 
+                 $info = SteadfastCourier::where('invoice', $order->order_serial_no)->first();
+                return response(['status' => true, 'data' => $info], 200);
+            } else {
+                 return new OrderDetailsResource($this->orderService->show($order, false));
+            }
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
+
+
+
+
 }
