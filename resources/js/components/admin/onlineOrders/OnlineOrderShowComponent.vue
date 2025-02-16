@@ -448,8 +448,7 @@ export default {
                 this.info = response.data.data;
             })
             .catch(error => {
-                console.error("Axios Error:", error);
-                // alertService.error(error.message);
+                alertService.error(error.message);
             });
         },
         isInfoAvailable() {
