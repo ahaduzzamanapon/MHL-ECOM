@@ -446,15 +446,6 @@ export default {
             axios.get("admin/online-order/checkCourierStatus/" + this.$route.params.id)
             .then(response => {
                 this.info = response.data.data;
-                // const courierInfo = document.getElementById('courier_info');
-                // const courierSelect = document.getElementById('courier_select');
-                // if (this.info != null) {
-                //     courierInfo.style.display   = 'block';
-                //     courierSelect.style.display = 'none';
-                // } else {
-                //     courierInfo.style.display   = 'none';
-                //     courierSelect.style.display = 'block';
-                // }
             })
             .catch(error => {
                 console.error("Axios Error:", error);
