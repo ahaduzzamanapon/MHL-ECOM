@@ -6,7 +6,7 @@
                 <h3 class="db-card-title">{{ $t('menu.online_orders') }} </h3>
                 <!-- {{ currentSelections }} -->
                 <div class="flex items-center gap-3 p-3">
-                    <select id="courier_select_option"
+                    <select id="courier_select_option" :disabled="currentSelections === null || currentSelections === '' || !currentSelections || JSON.parse(currentSelections).length === 0"
                         class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
                         <option value="" selected>Select Courier</option>
                         <option v-for="courier in couriers" :value="courier">
@@ -357,6 +357,7 @@ export default {
         sendCourier: function () {
             this.loading.isActive = true;
             const selectedCourier = document.querySelector("#courier_select_option").value;
+
             if (!selectedCourier || selectedCourier === "") {
                 this.loading.isActive = false;
                 alertService.error("Please select a courier");
