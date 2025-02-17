@@ -175,7 +175,7 @@
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
                 <div v-if="isInfoAvailable()"  class="db-card p-1">
-                    <h3 class="db-card-title">Infos</h3>
+                    <h3 class="db-card-title">Couriere Info</h3>
                     <div class="grid grid-cols-2 gap-3 p-3">
                         <div class="text-sm capitalize font-semibold">Consignment ID:</div>
                         <div class="text-sm capitalize">{{ info.consignment_id }}</div>
@@ -313,7 +313,7 @@ import alertService from "../../../services/alertService";
 import OnlineOrderReasonComponent from "./OnlineOrderReasonComponent";
 import OnlineOrderReceiptComponent from "./OnlineOrderReceiptComponent";
 import axios from "axios";
-import { info } from "autoprefixer";
+import { info } from "autoprefixer";    
 
 
 export default {

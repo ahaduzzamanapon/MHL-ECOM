@@ -88,9 +88,10 @@
                                     </li>
                                 </ul>
                             </div>
-                            <input v-model="address.form.phone" v-on:keypress="phoneNumber($event)"
+                            <input  placeholder="Phone Number Except 0; Ex: 123456789" v-model="address.form.phone" v-on:keypress="phoneNumber($event)" maxlength="11"
                                 :class="errors.phone ? 'invalid' : ''" type="text" id="phone"
-                                class="pl-2 text-sm w-full h-full" />
+                                class="pl-2 text-sm w-full h-full"
+                                :style="{ 'border-color': address.form.phone.length < 11 ? 'rgba(255, 0, 0, 0.1)' : '' }" />
                         </div>
 
                         <small class="db-field-alert" v-if="errors.phone">

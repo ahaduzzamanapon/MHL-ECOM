@@ -3,7 +3,22 @@
     <div class="col-12">
         <div class="db-card">
             <div class="db-card-header border-none">
-                <h3 class="db-card-title">{{ $t('menu.online_orders') }}</h3>
+                <h3 class="db-card-title">{{ $t('menu.online_orders') }} </h3>
+                <!-- {{ currentSelections }} -->
+                <div class="flex items-center gap-3 p-3">
+                    <select id="courier_select_option"
+                        class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
+                        <option value="" selected>Select Courier</option>
+                        <option v-for="courier in couriers" :value="courier">
+                            {{ courier }}
+                        </option>
+                    </select>
+                    <button type="button" @click="sendCourier($event)"
+                        class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
+                        Send
+                    </button>
+                </div>
+                
                 <div class="db-card-filter">
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent />
@@ -16,6 +31,8 @@
                     </div>
                 </div>
             </div>
+                
+
 
             <div class="table-filter-div">
                 <form class="p-4 sm:p-5 mb-5 w-full d-block" @submit.prevent="search">
@@ -81,12 +98,14 @@
                 <table class="db-table stripe" id="print">
                     <thead class="db-table-head">
                         <tr class="db-table-head-tr">
+                            <th class="db-table-head-th">#</th>
                             <th class="db-table-head-th">{{ $t('label.order_id') }}</th>
                             <th class="db-table-head-th">{{ $t('label.order_type') }}</th>
                             <th class="db-table-head-th">{{ $t('label.customer') }}</th>
                             <th class="db-table-head-th">{{ $t('label.amount') }}</th>
                             <th class="db-table-head-th">{{ $t('label.date') }}</th>
                             <th class="db-table-head-th">{{ $t('label.status') }}</th>
+                            <th class="db-table-head-th">Courier Status</th>
                             <th class="db-table-head-th hidden-print" v-if="permissionChecker('online-orders')">
                                 {{ $t('label.action') }}
                             </th>
@@ -95,8 +114,10 @@
                     <tbody class="db-table-body" v-if="orders.length > 0">
                         <tr class="db-table-body-tr" v-for="order in orders" :key="order">
                             <td class="db-table-body-td">
+                                <input type="checkbox" :disabled="order.courier_id != null" v-model="order.selected" />
+                            </td>
+                            <td class="db-table-body-td">
                                 {{ order.order_serial_no }}
-
                             </td>
                             <td class="db-table-body-td">
                                 <span :class="statusClass(order.order_type)">
@@ -114,6 +135,14 @@
                             <td class="db-table-body-td">
                                 <span class="db-table-badge" :class="orderStatusClass(order.status)">
                                     {{ enums.orderStatusEnumArray[order.status] }}
+                                </span>
+                            </td>
+                            <td class="db-table-body-td">
+                                <span class="db-table-badge bg-indigo-100 text-indigo-500" v-if="order.courier_type">
+                                    {{ order.courier_type }}
+                                </span>
+                                <span class="db-table-badge bg-gray-100 text-gray-500" v-else>
+                                   N/A
                                 </span>
                             </td>
                             <td class="db-table-body-td hidden-print" v-if="permissionChecker('online-orders')">
@@ -156,6 +185,8 @@ import ExcelComponent from "../components/buttons/export/ExcelComponent";
 import statusEnum from "../../../enums/modules/statusEnum";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import axios from "axios";
+
 
 
 export default {
@@ -179,6 +210,8 @@ export default {
             loading: {
                 isActive: false
             },
+            couriers: [],
+            // orders:[],
             enums: {
                 orderStatusEnum: orderStatusEnum,
                 orderTypeEnum: orderTypeEnum,
@@ -219,8 +252,14 @@ export default {
             modelValue: null
         }
     },
+    created() { 
+        this.fetchCouriers();
+    },
     mounted() {
         this.list();
+        if (this.orders && Array.isArray(this.orders)) {
+            this.orders.forEach(order => this.$set(order, "selected", false));
+        }
         this.$store.dispatch('user/lists', {
             order_column: 'id',
             order_type: 'asc',
@@ -229,6 +268,7 @@ export default {
     },
     computed: {
         orders: function () {
+            // console.log(this.$store.getters['onlineOrder/lists']);
             return this.$store.getters['onlineOrder/lists'];
         },
         customers: function () {
@@ -305,7 +345,49 @@ export default {
                 alertService.error(err.response.data.message);
             });
         },
+        fetchCouriers() {
+            axios.get("admin/setting/courier")
+            .then(response => {
+                this.couriers = response.data.map(item => item.name);
+            })
+            .catch(error => {
+                alertService.error(error.message);
+            });
+        },
+        sendCourier: function () {
+            this.loading.isActive = true;
+            const selectedCourier = document.querySelector("#courier_select_option").value;
+            if (!selectedCourier || selectedCourier === "") {
+                this.loading.isActive = false;
+                alertService.error("Please select a courier");
+                return;
+            }
+            axios.post("admin/online-order/sendCourier", {
+                courier: selectedCourier,
+                id: JSON.parse(this.currentSelections),
+            }).then(response => {
+                this.loading.isActive = false;
+                if(response.data['status']){
+                    alertService.success(response.data['message']);
+                }else{
+                    alertService.error(response.data['message']);
+                }
+            }).catch(error => {
+                this.loading.isActive = false;
+                alertService.error(error.message);
+            });
+        }
+    },
+    watch: {
+    orders: {
+      handler() {
+        this.currentSelections = JSON.stringify(this.orders
+          .filter( order => order.selected )
+          .map( order => order.id ));
+      },
+      deep: true
     }
+  }
 }
 </script>
 
@@ -318,6 +400,5 @@ export default {
     .hidden-print {
         display: none !important;
     }
-
 }
 </style>

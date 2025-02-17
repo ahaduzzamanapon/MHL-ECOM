@@ -43,6 +43,8 @@ class OrderService
         'payment_method',
         'payment_status',
         'status',
+        'courier_id',
+        'courier_type',
         'active',
         'source'
     ];

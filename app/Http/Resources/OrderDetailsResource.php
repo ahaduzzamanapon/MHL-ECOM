@@ -18,6 +18,8 @@ class OrderDetailsResource extends JsonResource
     {
         return [
             'id'                             => $this->id,
+              'courier_type'                   => $this->courier_type,
+            'courier_id'                     => $this->courier_id,
             'order_serial_no'                => $this->order_serial_no,
             'user_id'                        => $this->user_id,
             "subtotal_currency_price"        => AppLibrary::currencyAmountFormat($this->subtotal),
@@ -34,6 +36,7 @@ class OrderDetailsResource extends JsonResource
             'payment_method_name'            => $this->paymentMethod?->name,
             'payment_status'                 => $this->payment_status,
             'status'                         => $this->status,
+          
             'reason'                         => $this->reason,
             'source'                         => $this->source,
             'active'                         => (int) $this->active,
