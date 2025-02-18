@@ -14,6 +14,7 @@ use App\Http\Requests\PaymentStatusRequest;
 use App\Http\Resources\OrderDetailsResource;
 use Illuminate\Http\Request;
 
+
 class OnlineOrderController extends AdminController
 {
     private OrderService $orderService;
@@ -47,6 +48,21 @@ class OnlineOrderController extends AdminController
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+    public function courier_status(Request $request): \Illuminate\Http\Response | \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    {
+        try {
+            $req=$request->all();
+            $order_id=$req['invoice'];
+            $status=$req['status'];
+            $steadfast=SteadfastCourier::where('invoice', $order_id)->first();
+            $steadfast->status=$status;
+            $steadfast->save();
+            return response($steadfast);
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
+
 
     public function show(Order $order): \Illuminate\Http\Response | OrderDetailsResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {

@@ -111,6 +111,7 @@ use App\Http\Controllers\Frontend\CountryStateCityController as FrontendCountryS
 use App\Http\Controllers\Frontend\ProductVariationController as FrontendProductVariationController;
 use App\Http\Controllers\Frontend\PromotionProductController as FrontendPromotionProductController;
 use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendProductSectionProductController;
+use App\Http\Controllers\RedxCourierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -124,6 +125,9 @@ use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendPro
 */
 
 Route::post('/get_product_by_sku', [ProductController::class, 'get_product_by_sku']);
+Route::post('/courier_status', [OnlineOrderController::class, 'courier_status']);
+Route::get('/get_area_list', [RedxCourierController::class, 'get_area_list']);
+
 
 
 
@@ -169,7 +173,7 @@ Route::prefix('auth')->middleware(['installed', 'apiKey', 'localization'])->name
 });
 
 /* all routes must be singular word*/
-Route::prefix('profile')->name('profile.')->middleware(['installed', 'apiKey', 'auth:sanctum', 'localization'])->group(function () {
+Route::prefix('profile')->name('profile.')->middleware(['installed', 'auth:sanctum', 'localization'])->group(function () {
     Route::get('/', [ProfileController::class, 'profile']);
     Route::match(['post', 'put', 'patch'], '/', [ProfileController::class, 'update']);
     Route::match(['put', 'patch'], '/change-password', [ProfileController::class, 'changePassword']);
@@ -724,7 +728,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(func
     });
 });
 
-Route::prefix('frontend')->name('frontend.')->middleware(['installed', 'apiKey', 'localization'])->group(function () {
+Route::prefix('frontend')->name('frontend.')->middleware(['installed','localization'])->group(function () {
     Route::prefix('setting')->name('setting.')->group(function () {
         Route::get('/', [FrontendSettingController::class, 'index']);
     });

@@ -68,13 +68,13 @@ export default {
             });
         }).catch();
 
-        if (env.DEMO === "true" || env.DEMO === true || env.DEMO === "1" || env.DEMO === 1) {
-            this.$store.dispatch("authcheck").then(res => {
-                if (res.data.status === false) {
-                    this.$router.push({ name: "frontend.home" });
-                };
-            }).catch();
-        }
+        // if (env.DEMO === "true" || env.DEMO === true || env.DEMO === "1" || env.DEMO === 1) {
+        //     this.$store.dispatch("authcheck").then(res => {
+        //         if (res.data.status === false) {
+        //             this.$router.push({ name: "frontend.home" });
+        //         };
+        //     }).catch();
+        // }
     },
     computed: {
         logged: function () {
