@@ -204,8 +204,13 @@
                         <select id="courier_select_option"
                             class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
                             <option value="" selected>Select Courier</option>
-                            <option v-for="courier in couriers" :value="courier">
-                                {{ courier }}
+                            <option  >Redex</option>
+                        </select>
+                        <select id="area_select_option"
+                            class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
+                            <option value="" selected>Select Area</option>
+                            <option v-for="area in areas"  :value="areas">
+                                {{ area }}
                             </option>
                         </select>
                         <button type="button" @click="sendCourier($event)"
@@ -332,6 +337,7 @@ export default {
             delivery_boy: null,
             order_status: null,
             couriers: [],
+            areas: [],
             info: [],
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
@@ -392,7 +398,8 @@ export default {
         }
     },
     created() {
-        this.fetchCouriers();
+        this.fetchAreas();
+        // this.fetchCouriers();
         this.checkCourierStatus();
     },
     computed: {
@@ -433,14 +440,25 @@ export default {
         orderStatusClass: function (status) {
             return appService.orderStatusClass(status);
         },
-        fetchCouriers() {
-            axios.get("admin/setting/courier")
-                .then(response => {
-                    this.couriers = response.data.map(item => item.name);
-                })
-                .catch(error => {
-                    alertService.error(error.message);
-                });
+        // fetchCouriers() {
+        //     axios.get("admin/setting/courier")
+        //         .then(response => {
+        //             this.couriers = response.data.map(item => item.name);
+        //         })
+        //         .catch(error => {
+        //             alertService.error(error.message);
+        //         });
+        // },
+        fetchAreas() {
+            axios.get("get_area_list")
+            .then(response => {
+                // console.log(response.data.areas);
+                this.areas = response.data.areas.map(item => item.name);
+                
+            })
+            .catch(error => {
+                alertService.error(error.message);
+            });
         },
         checkCourierStatus() {
             axios.get("admin/online-order/checkCourierStatus/" + this.$route.params.id)

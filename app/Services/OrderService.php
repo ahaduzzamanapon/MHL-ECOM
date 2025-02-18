@@ -265,7 +265,6 @@ class OrderService
     }
     public function sendCourier($req)
     {
-        // dd($req);
         $courier=$req->courier;
         $order_id=$req->id;
         $order_details=Order::where('id',$order_id)->first();
