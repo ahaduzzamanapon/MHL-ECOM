@@ -111,6 +111,7 @@ use App\Http\Controllers\Frontend\CountryStateCityController as FrontendCountryS
 use App\Http\Controllers\Frontend\ProductVariationController as FrontendProductVariationController;
 use App\Http\Controllers\Frontend\PromotionProductController as FrontendPromotionProductController;
 use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendProductSectionProductController;
+use App\Http\Controllers\RedxCourierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,6 +126,7 @@ use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendPro
 
 Route::post('/get_product_by_sku', [ProductController::class, 'get_product_by_sku']);
 Route::post('/courier_status', [OnlineOrderController::class, 'courier_status']);
+Route::get('/get_area_list', [RedxCourierController::class, 'get_area_list']);
 
 
 
