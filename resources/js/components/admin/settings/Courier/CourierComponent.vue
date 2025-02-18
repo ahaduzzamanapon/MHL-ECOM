@@ -1,36 +1,95 @@
 <template>
     <LoadingComponent :props="loading" />
     <div id="courier" class="db-tab-div active">
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-5">
-            <button v-for="(courier, index) in couriers" :key="courier" @click="selectActive(index)"
-                class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition"
-                :class="index === selectIndex ? 'bg-primary text-white' : 'bg-white hover:text-primary hover:bg-primary/5'">
-                <span class="capitalize whitespace-nowrap text-[15px]">{{ courier }}</span>
+        <div class="grid sm:grid-cols-3 gap-3 mb-5">
+            <button @click="selectIndex = 'steadfast'" class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition"
+                :class="selectIndex === 'steadfast' ? 'bg-primary text-white' : 'bg-white hover:text-primary hover:bg-primary/5'">
+                <span class="capitalize whitespace-nowrap text-[15px]">Steadfast</span>
+            </button>
+            <button @click="selectIndex = 'redex'" class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition"
+                :class="selectIndex === 'redex' ? 'bg-primary text-white' : 'bg-white hover:text-primary hover:bg-primary/5'">
+                <span class="capitalize whitespace-nowrap text-[15px]">Redex</span>
+            </button>
+            <button @click="selectIndex = 'pathao'" class="db-tab-sub-btn w-full flex items-center gap-3 h-10 px-4 rounded-lg transition"
+                :class="selectIndex === 'pathao' ? 'bg-primary text-white' : 'bg-white hover:text-primary hover:bg-primary/5'">
+                <span class="capitalize whitespace-nowrap text-[15px]">Pathao</span>
             </button>
         </div>
-        <div v-for="(courier, index) in couriers" :key="courier" class="db-card db-tab-sub-div"
-            :class="index === selectIndex ? 'active' : 'hidden'">
+
+        <div v-if="selectIndex === 'steadfast'" class="db-card">
             <div class="db-card-header">
-                <h3 class="db-card-title">{{ courier }}</h3>
+                <h3 class="db-card-title">Steadfast</h3>
             </div>
             <div class="db-card-body">
-                <form @submit.prevent="save(index)" :id="'formElem' + index" class="w-full">
+                <form @submit.prevent="save('steadfast')" class="w-full">
                     <div class="form-row">
-                        <input type="hidden" :value="courier" name="courier">
                         <div class="form-col-12">
-                            <label :for="'api_key' + index" class="db-field-title">API Key</label>
-                            <input type="text" v-model="courierInputs[index].api_key" :id="'api_key' + index"
-                                class="db-field-control" />
+                            <label class="db-field-title">Steadfast API Key</label>
+                            <input type="text" v-model="steadfast.api_key" class="db-field-control" />
                         </div>
                         <div class="form-col-12">
-                            <label :for="'secret_key' + index" class="db-field-title">Secret Key</label>
-                            <input type="text" v-model="courierInputs[index].secret_key" :id="'secret_key' + index"
-                                class="db-field-control" />
+                            <label class="db-field-title">Steadfast Secret Key</label>
+                            <input type="text" v-model="steadfast.secret_key" class="db-field-control" />
                         </div>
                         <div class="form-col-12 mt-3">
-                            <button type="submit" :id="'formButton' + index" class="db-btn text-white bg-primary">
+                            <button type="submit" class="db-btn text-white bg-primary">
                                 <i class="lab lab-fill-save"></i>
-                                <span>{{ $t("button.save") }}</span>
+                                <span>Save</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-if="selectIndex === 'redex'" class="db-card">
+            <div class="db-card-header">
+                <h3 class="db-card-title">Redex</h3>
+            </div>
+            <div class="db-card-body">
+                <form @submit.prevent="save('redex')" class="w-full">
+                    <div class="form-row">
+                        <div class="form-col-12">
+                            <label class="db-field-title">Redex API Key</label>
+                            <select v-model="redex.sandbox" class="db-field-control">
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                        </div>
+                        <div class="form-col-12">
+                            <label class="db-field-title">Redex Secret Key</label>
+                            <input type="text" v-model="redex.access_token" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12 mt-3">
+                            <button type="submit" class="db-btn text-white bg-primary">
+                                <i class="lab lab-fill-save"></i>
+                                <span>Save</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-if="selectIndex === 'pathao'" class="db-card">
+            <div class="db-card-header">
+                <h3 class="db-card-title">Pathao</h3>
+            </div>
+            <div class="db-card-body">
+                <form @submit.prevent="save('pathao')" class="w-full">
+                    <div class="form-row">
+                        <div class="form-col-12">
+                            <label class="db-field-title">Pathao API Key</label>
+                            <input type="text" v-model="pathao.api_key" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
+                            <label class="db-field-title">Pathao Secret Key</label>
+                            <input type="text" v-model="pathao.secret_key" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12 mt-3">
+                            <button type="submit" class="db-btn text-white bg-primary">
+                                <i class="lab lab-fill-save"></i>
+                                <span>Save</span>
                             </button>
                         </div>
                     </div>
@@ -53,9 +112,10 @@ export default {
             loading: {
                 isActive: false,
             },
-            selectIndex: 0,
-            couriers: [],
-            courierInputs: []
+            selectIndex: 'steadfast',
+            steadfast: { api_key: "", secret_key: "" },
+            redex: { sandbox: "", access_token: "" },
+            pathao: { api_key: "", secret_key: "" }
         };
     },
     created() {
@@ -66,26 +126,36 @@ export default {
             this.loading.isActive = true;
             axios.get("admin/setting/courier")
                 .then(response => {
-                    this.couriers = response.data.map(item => item.name);
-                    this.courierInputs = response.data.map(item => ({
-                        api_key: item.api_key,
-                        secret_key: item.secret_key
-                    }));
+                    // console.log("Fetched Data:", response.data); // Debugging
+
+                    response.data.forEach(item => {
+                        const name = item.name?.toLowerCase(); // Normalize name
+                        if (name === 'steadfast') {
+                            this.steadfast.api_key = item.api_key || "";
+                            this.steadfast.secret_key = item.secret_key || "";
+                        } else if (name === 'redex') {
+                            this.redex.sandbox = item.sandbox || "";
+                            this.redex.access_token = item.access_token || "";
+                        } else if (name === 'pathao') {
+                            this.pathao.api_key = item.api_key || "";
+                            this.pathao.secret_key = item.secret_key || "";
+                        }
+                    });
+
                     this.loading.isActive = false;
                 })
                 .catch(error => {
+                    console.error("Fetch Error:", error); // Debugging
                     alertService.error(error.message);
+                    this.loading.isActive = false;
                 });
         },
-        selectActive(index) {
-            this.selectIndex = index;
-        },
-        save(index) {
+        save(courier) {
             this.loading.isActive = true;
             axios.post("admin/setting/courier/insert", {
                 type: "courier",
-                value: this.courierInputs[index],
-                key: this.couriers[index]
+                value: this[courier],
+                key: courier
             }).then(response => {
                 this.loading.isActive = false;
                 if (response.data.success) {
@@ -101,4 +171,3 @@ export default {
     }
 };
 </script>
-

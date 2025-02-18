@@ -6,13 +6,10 @@
                 <h3 class="db-card-title">{{ $t('menu.online_orders') }} </h3>
                 <!-- {{ currentSelections }} -->
                 <div class="flex items-center gap-3 p-3">
-                    <select id="courier_select_option" :disabled="currentSelections === null || currentSelections === '' || !currentSelections || JSON.parse(currentSelections).length === 0"
-                        class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
-                        <option value="" selected>Select Courier</option>
-                        <option v-for="courier in couriers" :value="courier">
-                            {{ courier }}
-                        </option>
-                    </select>
+                    <button id="courier_select_option" :disabled="currentSelections === null || currentSelections === '' || !currentSelections || JSON.parse(currentSelections).length === 0"
+                        class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded outline outline-1 outline-primary border border-primary bg-white text-primary">
+                        Sent To Steadfast
+                    </button>
                     <button type="button" @click="sendCourier($event)"
                         class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
                         Send
@@ -211,6 +208,7 @@ export default {
                 isActive: false
             },
             couriers: [],
+            currentSelections:[],
             // orders:[],
             enums: {
                 orderStatusEnum: orderStatusEnum,
@@ -258,7 +256,7 @@ export default {
     mounted() {
         this.list();
         if (this.orders && Array.isArray(this.orders)) {
-            this.orders.forEach(order => this.$set(order, "selected", false));
+            this.orders.forEach(order => order.selected = false);
         }
         this.$store.dispatch('user/lists', {
             order_column: 'id',
@@ -269,7 +267,7 @@ export default {
     computed: {
         orders: function () {
             // console.log(this.$store.getters['onlineOrder/lists']);
-            return this.$store.getters['onlineOrder/lists'];
+            return this.$store.getters['onlineOrder/lists'] || [];
         },
         customers: function () {
             return this.$store.getters['user/lists'];
@@ -279,7 +277,8 @@ export default {
         },
         paginationPage: function () {
             return this.$store.getters['onlineOrder/page'];
-        }
+        },
+        
     },
     methods: {
         permissionChecker(e) {
@@ -380,15 +379,20 @@ export default {
         }
     },
     watch: {
-    orders: {
-      handler() {
-        this.currentSelections = JSON.stringify(this.orders
-          .filter( order => order.selected )
-          .map( order => order.id ));
-      },
-      deep: true
+        orders: {
+            handler(newOrders) {
+                if (Array.isArray(newOrders)) {
+                    this.currentSelections = JSON.stringify(newOrders
+                        .filter(order => order.selected)
+                        .map(order => order.id));
+                } else {
+                    this.currentSelections = "[]";
+                }
+            },
+            deep: true,
+            immediate: true
+        }
     }
-  }
 }
 </script>
 
