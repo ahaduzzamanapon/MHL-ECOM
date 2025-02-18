@@ -213,7 +213,7 @@
                                 {{ area.name }}
                             </option>
                         </select>
-                        <input type="text" v-model="weight">
+                        <input class="rounded border border-primary bg-white text-primary" type="text" v-model="weight">
                         <button type="button" @click="sendCourier($event)"
                             class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
                             Send
@@ -565,7 +565,6 @@ export default {
                     alertService.error(response.data['message']);
                 };
             }).catch(error => {
-
                 this.loading.isActive = false;
                 alertService.error(error.message);
             });
