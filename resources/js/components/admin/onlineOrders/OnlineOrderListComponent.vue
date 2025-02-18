@@ -6,14 +6,9 @@
                 <h3 class="db-card-title">{{ $t('menu.online_orders') }} </h3>
                 <!-- {{ currentSelections }} -->
                 <div class="flex items-center gap-3 p-3">
-                    <button id="courier_select_option" :disabled="currentSelections === null || currentSelections === '' || !currentSelections || JSON.parse(currentSelections).length === 0"
+                    <button  @click="sendCourier($event)" id="courier_select_option" :disabled="currentSelections === null || currentSelections === '' || !currentSelections || JSON.parse(currentSelections).length === 0"
                         class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded outline outline-1 outline-primary border border-primary bg-white text-primary">
-                        Sent To Steadfast
-                    </button>
-                    <button type="button" @click="sendCourier($event)"
-                        class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
-                        Send
-                    </button>
+                        Sent To Steadfast </button>
                 </div>
                 
                 <div class="db-card-filter">
@@ -355,15 +350,8 @@ export default {
         },
         sendCourier: function () {
             this.loading.isActive = true;
-            const selectedCourier = document.querySelector("#courier_select_option").value;
-
-            if (!selectedCourier || selectedCourier === "") {
-                this.loading.isActive = false;
-                alertService.error("Please select a courier");
-                return;
-            }
             axios.post("admin/online-order/sendCourier", {
-                courier: selectedCourier,
+                courier: "Steadfast",
                 id: JSON.parse(this.currentSelections),
             }).then(response => {
                 this.loading.isActive = false;
