@@ -214,8 +214,8 @@ export const frontendCart = {
                 let subtotal = 0;
                 let total    = 0;
                 _.forEach(state.lists, (list, listKey) => {
-                    console.log('list');
-                    console.log(list);
+                    // console.log('list');
+                    // console.log(list);
                     state.lists[listKey].subtotal = state.lists[listKey].price * state.lists[listKey].quantity;
                     state.lists[listKey].total    = ((state.lists[listKey].price * state.lists[listKey].quantity) + state.lists[listKey].total_tax) - state.lists[listKey].discount;
                     subtotal                      += state.lists[listKey].subtotal;

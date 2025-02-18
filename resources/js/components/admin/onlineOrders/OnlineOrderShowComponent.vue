@@ -206,13 +206,14 @@
                             <option value="" selected>Select Courier</option>
                             <option  >Redex</option>
                         </select>
-                        <select id="area_select_option"
+                        <select id="area_select_option" v-model="area_name"
                             class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
                             <option value="" selected>Select Area</option>
-                            <option v-for="area in areas"  :value="areas">
-                                {{ area }}
+                            <option v-for="area in areas"  :value="area.id">
+                                {{ area.name }}
                             </option>
                         </select>
+                        <input type="text" v-model="weight">
                         <button type="button" @click="sendCourier($event)"
                             class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
                             Send
@@ -336,8 +337,10 @@ export default {
             payment_status: null,
             delivery_boy: null,
             order_status: null,
-            couriers: [],
+            couriers: "redex",
             areas: [],
+            area_name: '',
+            weight: '',
             info: [],
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
@@ -418,6 +421,10 @@ export default {
         outletAddress: function () {
             return this.$store.getters['onlineOrder/outletAddress'];
         },
+        selectedAreaName: function() {
+            const selectedArea = this.areas.find(area => area.id === this.area_name);
+            return selectedArea ? selectedArea.name : ''; // Return name or empty if not selected
+        }
 
     },
     mounted() {
@@ -440,20 +447,12 @@ export default {
         orderStatusClass: function (status) {
             return appService.orderStatusClass(status);
         },
-        // fetchCouriers() {
-        //     axios.get("admin/setting/courier")
-        //         .then(response => {
-        //             this.couriers = response.data.map(item => item.name);
-        //         })
-        //         .catch(error => {
-        //             alertService.error(error.message);
-        //         });
-        // },
         fetchAreas() {
             axios.get("get_area_list")
             .then(response => {
                 // console.log(response.data.areas);
-                this.areas = response.data.areas.map(item => item.name);
+                this.areas = response.data.areas;
+                // this.areas = response.data.areas.map(item => item.name);
                 
             })
             .catch(error => {
@@ -546,6 +545,7 @@ export default {
         sendCourier: function () {
             this.loading.isActive = true;
             const selectedCourier = document.querySelector("#courier_select_option").value;
+            const area_id = document.querySelector("#area_select_option").value;
             if (!selectedCourier || selectedCourier === "") {
                 this.loading.isActive = false;
                 alertService.error("Please select a courier");
@@ -553,6 +553,9 @@ export default {
             }
             axios.post("admin/online-order/sendCourier", {
                 courier: selectedCourier,
+                area_id: area_id,
+                area_name : this.selectedAreaName,
+                weight: this.weight,
                 id: this.$route.params.id,
             }).then(response => {
                 this.loading.isActive = false;
@@ -567,7 +570,8 @@ export default {
                 alertService.error(error.message);
             });
         }
-    }
+    },
+
 
 }
 </script>
