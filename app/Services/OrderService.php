@@ -13,6 +13,7 @@ use App\Models\Stock;
 use App\Enums\OrderType;
 use App\Models\StockTax;
 use App\Models\OrderAddress;
+use App\Models\RedexCourierModel;
 use App\Models\SteadfastCourier as SteadfastCourierModel;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
@@ -28,6 +29,9 @@ use App\Http\Requests\OrderStatusRequest;
 use App\Http\Requests\PaymentStatusRequest;
 use SteadFast\SteadFastCourierLaravelPackage\Facades\SteadfastCourier;
 use App\Http\Resources\OrderDetailsResource;
+use App\Http\Resources\OrderProductResource;
+use Codeboxr\RedxCourier\Facade\RedxCourier;
+
 
 
 
@@ -265,58 +269,128 @@ class OrderService
     }
     public function sendCourier($req)
     {
-        $courier=$req->courier;
-        $order_id=$req->id;
-        $order_details=Order::where('id',$order_id)->first();
-        $order_addresses=OrderAddress::where('order_id',$order_id)->first();
-        if($order_details->payment_method==1){
-            $payment_amount=$order_details->total;
-            $note="Cash on Delivery";
-        }else{
-            $payment_amount=0;
-            $note="Online Payment";
+        try {
+            if (is_array($req->id)) {
+                $massage='';
+                foreach ($req->id as $order_id) {
+                    $data=$this->sendSingleOrder($req->courier, $order_id, $req);
+                    if ($data['status'] == false) {
+                        $massage .= $data['message'] . "<br>";
+                    }
+                }
+                if (!blank($massage)) {
+                    return ['status' => true, 'message' => $massage];
+                }else{
+                    return ['status' => true, 'message' => 'Courier Sent Successfully'];
+                }
+
+            } else {
+                return $this->sendSingleOrder($req->courier, $req->id, $req);
+            }
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => $th->getMessage()];
         }
-        if ($courier == "Steadfast") {
-                $orderData =[
+    }
+
+    public function sendSingleOrder($courier, $order_id,$req)
+    {
+        try {
+            $order_details = Order::where('id', $order_id)->first();
+            $order_product=(OrderProductResource::collection($order_details->orderProducts));
+
+            $order_addresses = OrderAddress::where('order_id', $order_id)->first();
+
+            if ($order_details->payment_method == 1) {
+                $payment_amount = $order_details->total;
+                $note = "Cash on Delivery";
+            } else {
+                $payment_amount = 0;
+                $note = "Online Payment";
+            }
+            if ($courier == "Steadfast") {
+                $orderData = [
                     'invoice' => $order_details->order_serial_no,
                     'recipient_name' => $order_addresses->full_name,
-                    'recipient_phone' => $order_addresses->country_code.$order_addresses->phone,
-                    'recipient_address' => $order_addresses->address.', '.$order_addresses->city.', '.$order_addresses->state.', '.$order_addresses->country.', '.$order_addresses->zip_code,
+                    'recipient_phone' => $order_addresses->country_code . $order_addresses->phone,
+                    'recipient_address' => $order_addresses->address . ', ' . $order_addresses->city . ', ' . $order_addresses->state . ', ' . $order_addresses->country . ', ' . $order_addresses->zip_code,
                     'cod_amount' => $payment_amount,
                     'note' => $note
                 ];
                 $response = SteadfastCourier::placeOrder($orderData);
                 if ($response['status'] == 200) {
                     try {
-                        $Stedfast=new SteadfastCourierModel();
-                        $Stedfast->consignment_id=$response['consignment']['consignment_id'];
-                        $Stedfast->invoice=$response['consignment']['invoice'];
-                        $Stedfast->tracking_code=$response['consignment']['tracking_code'];
-                        $Stedfast->recipient_name=$response['consignment']['recipient_name'];
-                        $Stedfast->recipient_phone=$response['consignment']['recipient_phone'];
-                        $Stedfast->recipient_address=$response['consignment']['recipient_address'];
-                        $Stedfast->cod_amount=$response['consignment']['cod_amount'];
-                        $Stedfast->status=$response['consignment']['status'];
-                        $Stedfast->note=$response['consignment']['note'];
+                        $Stedfast = new SteadfastCourierModel();
+                        $Stedfast->consignment_id = $response['consignment']['consignment_id'];
+                        $Stedfast->invoice = $response['consignment']['invoice'];
+                        $Stedfast->tracking_code = $response['consignment']['tracking_code'];
+                        $Stedfast->recipient_name = $response['consignment']['recipient_name'];
+                        $Stedfast->recipient_phone = $response['consignment']['recipient_phone'];
+                        $Stedfast->recipient_address = $response['consignment']['recipient_address'];
+                        $Stedfast->cod_amount = $response['consignment']['cod_amount'];
+                        $Stedfast->status = $response['consignment']['status'];
+                        $Stedfast->note = $response['consignment']['note'];
                         $Stedfast->save();
-                        $order=Order::where('id',$order_id)->first();
-                        $order->courier_id=$Stedfast->id;
-                        $order->courier_type='Stedfast';
+                        $order = Order::where('id', $order_id)->first();
+                        $order->courier_id = $Stedfast->id;
+                        $order->courier_type = 'Stedfast';
                         $order->save();
                         return ['status' => true, 'message' => "Order sent to courier Successfully"];
                     } catch (\Throwable $th) {
                         return ['status' => false, 'message' => $th->getMessage()];
                     }
-                }else{
-                    $error='';
+                } else {
+                    $error = '';
                     foreach ($response['errors'] as $key => $value) {
-                        $error.=$value[0].', ';
+                        $error .= $value[0] . ', '.'order id : ' . $order_details->order_serial_no . '<br>';
                     }
                     return ['status' => false, 'message' => $error];
                 }
-
-        }else{
-            return ['status' => false, 'message' => "Courier not supported"];
+            }elseif($courier == "Redex"){
+                // $orderData = [
+                //     'invoice' => $order_details->order_serial_no,
+                //     'recipient_name' => $order_addresses->full_name,
+                //     'recipient_phone' => $order_addresses->country_code . $order_addresses->phone,
+                //     'recipient_address' => $order_addresses->address . ', ' . $order_addresses->city . ', ' . $order_addresses->state . ', ' . $order_addresses->country . ', ' . $order_addresses->zip_code,
+                //     'cod_amount' => $payment_amount,
+                //     'note' => $note
+                // ];
+                $response = RedxCourier::order()->create([
+                    'customer_name' => $order_addresses->full_name,
+                    'customer_phone' => $order_addresses->country_code . $order_addresses->phone,
+                    'delivery_area' => $req->area_name,
+                    'delivery_area_id' => (int)$req->area_id,
+                    'customer_address' => $order_addresses->address . ', ' . $order_addresses->city . ', ' . $order_addresses->state . ', ' . $order_addresses->country . ', ' . $order_addresses->zip_code,
+                    'merchant_invoice_id' => $order_details->order_serial_no,
+                    'cash_collection_amount' => $payment_amount,
+                    'parcel_weight' => $req->weight,
+                    'instruction' => $note,
+                    'value' => 30,
+                    'pickup_store_id' => 1,
+                    'parcel_details_json' =>$order_product
+                ]);
+                if ($response->tracking_id!='') {
+                    $redex_tble=new RedexCourierModel();
+                    $redex_tble->order_id=$order_id;
+                    $redex_tble->tracking_id=$response->tracking_id;
+                    $redex_tble->invoice=$order_details->order_serial_no;
+                    $redex_tble->customer_name=$order_addresses->full_name;
+                    $redex_tble->customer_phone=$order_addresses->country_code . $order_addresses->phone;
+                    $redex_tble->delivery_area=$req->area_name;
+                    $redex_tble->customer_address=$order_addresses->address . ', ' . $order_addresses->city . ', ' . $order_addresses->state . ', ' . $order_addresses->country . ', ' . $order_addresses->zip_code;
+                    $redex_tble->save();
+                    $order = Order::where('id', $order_id)->first();
+                    $order->courier_id = $redex_tble->id;
+                    $order->courier_type = 'Redex';
+                    $order->save();
+                    return ['status' => true, 'message' => "Order sent to courier Successfully"];
+                }else{
+                    return ['status' => false, 'message' => 'Something went wrong'];
+                }
+            } else {
+                return ['status' => false, 'message' => "Courier not supported"];
+            }
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => $th->getMessage()];
         }
     }
     /**
