@@ -12,6 +12,7 @@ class PathaoCourierController extends Controller
     private $clientSecret;
     private $username;
     private $password;
+    private $access_token;
     
     public function __construct()
     {
@@ -20,6 +21,7 @@ class PathaoCourierController extends Controller
         $this->clientSecret = env('PATHAO_CLIENT_SECRET', 'your_client_secret');
         $this->username = env('PATHAO_USERNAME', 'test@pathao.com');
         $this->password = env('PATHAO_PASSWORD', 'lovePathao');
+        $this->access_token = '';
     }
 
     // 1️⃣ Issue an Access Token
@@ -32,7 +34,7 @@ class PathaoCourierController extends Controller
             'username' => $this->username,
             'password' => $this->password
         ]);
-
+        $this->access_token = $response->json()['access_token'];
         return response()->json($response->json());
     }
 
@@ -54,11 +56,14 @@ class PathaoCourierController extends Controller
     // 3️⃣ Create a New Store
     public function createStore(Request $request)
     {
-        $accessToken = $request->header('Authorization');
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/stores", $request->all());
+
+
 
         return response()->json($response->json());
     }
@@ -66,19 +71,19 @@ class PathaoCourierController extends Controller
     // 4️⃣ Create a New Order
     public function createOrder(Request $request)
     {
-        $accessToken = $request->header('Authorization');
-
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/orders", $request->all());
-
         return response()->json($response->json());
     }
 
     // 5️⃣ Create a Bulk Order
     public function createBulkOrder(Request $request)
     {
-        $accessToken = $request->header('Authorization');
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
@@ -90,7 +95,8 @@ class PathaoCourierController extends Controller
     // 6️⃣ Get Order Short Info
     public function getOrderInfo(Request $request, $orderId)
     {
-        $accessToken = $request->header('Authorization');
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
@@ -102,19 +108,20 @@ class PathaoCourierController extends Controller
     // 7️⃣ Get List of Cities
     public function getCityList(Request $request)
     {
-        $accessToken = $request->header('Authorization');
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->get("{$this->baseUrl}/aladdin/api/v1/city-list");
-
         return response()->json($response->json());
     }
 
     // 8️⃣ Get Zones inside a particular city
     public function getZones(Request $request, $cityId)
     {
-        $accessToken = $request->header('Authorization');
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
@@ -126,8 +133,8 @@ class PathaoCourierController extends Controller
     // 9️⃣ Get Areas inside a particular zone
     public function getAreas(Request $request, $zoneId)
     {
-        $accessToken = $request->header('Authorization');
-
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->get("{$this->baseUrl}/aladdin/api/v1/zones/{$zoneId}/area-list");
@@ -138,8 +145,8 @@ class PathaoCourierController extends Controller
     // 🔟 Price Calculation API
     public function calculatePrice(Request $request)
     {
-        $accessToken = $request->header('Authorization');
-
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/merchant/price-plan", $request->all());
@@ -150,12 +157,11 @@ class PathaoCourierController extends Controller
     // 🔟 Get Merchant Store Info
     public function getMerchantStoreInfo(Request $request)
     {
-        $accessToken = $request->header('Authorization');
-
+        $this->issueAccessToken();
+        $accessToken = $this->access_token;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->get("{$this->baseUrl}/aladdin/api/v1/stores");
-
         return response()->json($response->json());
     }
 }

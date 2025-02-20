@@ -215,27 +215,65 @@
                         <div class="text-sm capitalize">{{ info.tracking_id }}</div>
                     </div>
 
+                    <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Pathao'">
+                        <div class="text-sm capitalize font-semibold">Customer Name:</div>
+                        <div class="text-sm capitalize">{{info.customer_name}}</div>
+                        <div class="text-sm capitalize font-semibold">Customer Phone:</div>
+                        <div class="text-sm capitalize">{{info.customer_phone}}</div>
+                        <div class="text-sm capitalize font-semibold">Customer Address:</div>
+                        <div class="text-sm capitalize">{{info.customer_address}}</div>
+                        <div class="text-sm capitalize font-semibold">Delivery Area:</div>
+                        <div class="text-sm capitalize">{{info.delivery_area}}</div>
+                        <div class="text-sm capitalize font-semibold">ID:</div>
+                        <div class="text-sm capitalize">{{info.id}}</div>
+                        <div class="text-sm capitalize font-semibold">Invoice:</div>
+                        <div class="text-sm capitalize">{{info.invoice}}</div>
+                        <div class="text-sm capitalize font-semibold">Order ID:</div>
+                        <div class="text-sm capitalize">{{ info.order_id }}</div>
+                        <div class="text-sm capitalize font-semibold">Tracking ID:</div>
+                        <div class="text-sm capitalize">{{ info.tracking_id }}</div>
+                    </div>
+
                 </div>
 
-                <div v-else class="db-card p-1">
-                    <h3 class="db-card-title">Select Courier</h3>
-                    <div class="flex items-center gap-3 p-3">
-                        <select id="courier_select_option"
-                            class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
-                            <option value="" selected>Select Courier</option>
-                            <option  >Redex</option>
-                        </select>
-                        <select id="area_select_option" v-model="area_name"
-                            class="text-sm capitalize appearance-none pl-4 pr-10 h-[38px] rounded border border-primary bg-white text-primary">
-                            <option value="" selected>Select Area</option>
-                            <option v-for="area in areas"  :value="area.id">
-                                {{ area.name }}
-                            </option>
-                        </select>
-                        <input class="rounded border border-primary bg-white text-primary" type="text" v-model="weight"
-                            placeholder="Product Weight [Kg]">
+                <div v-else class="db-card p-1 ">
+                    <h3 class="db-card-title">Select Courier </h3>
+                    <div class="flex items-center">
+                        <div class=" gap-3 p-3">
+                            <select id="courier_select_option" v-model="selectedCourier"
+                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
+                                <option value="" selected>Select Courier</option>
+                                <option>Steadfast</option>
+                                <option>Redex</option>
+                                <option>Pathao</option>
+                            </select>
+                        </div>
+                        <div class="gap-3 p-3">
+                            <select id="pathao_city_select_option" v-model="city_name"
+                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
+                                <option value="" selected>Select Area</option>
+                                <option v-for="city in citys"  :value="city.city_id">
+                                    {{ city.city_name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="gap-3 p-3">
+                            <select id="area_select_option" v-model="area_name"
+                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
+                                <option value="" selected>Select Area</option>
+                                <option v-for="area in areas"  :value="area.id">
+                                    {{ area.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="gap-3 p-3">
+                            <input class="rounded border border-primary bg-white pl-4 pr-4 text-primary h-[38px]" type="text" v-model="weight"
+                                placeholder="Product Weight [Kg]">
+                        </div>
+                    </div>    
+                    <div class="gap-3 p-3">
                         <button type="button" @click="sendCourier($event)"
-                            class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
+                            class="flex items-center justify-center text-white gap-2 px-4  h-[38px] rounded shadow-db-card bg-[#ff6912]">
                             Send
                         </button>
                     </div>
@@ -356,12 +394,22 @@ export default {
             payment_status: null,
             delivery_boy: null,
             order_status: null,
-            couriers: "redex",
+            selectedCourier: '',
+            access_token: '',
+            token_type: '',
+            // couriers: "redex",
+            citys: [],
+            city_name: '',
+            zones: [],
+            zone_name: '', 
             areas: [],
             area_name: '',
             weight: '',
             info: [],
             courier_name: '',
+            pathao_city_id: '',
+            pathao_zone_id: '',
+            pathao_area_id: '',
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
                 addressTypeEnum: addressTypeEnum,
@@ -421,11 +469,13 @@ export default {
         }
     },
     created() {
+        this.accessToken();
         this.fetchAreas();
-        // this.fetchCouriers();
+        this.fetchCitys();
         this.checkCourierStatus();
     },
     computed: {
+
         order: function () {
             return this.$store.getters['onlineOrder/show'];
         },
@@ -467,6 +517,56 @@ export default {
         orderStatusClass: function (status) {
             return appService.orderStatusClass(status);
         },
+      async accessToken() { 
+        try {
+            const response = await axios.post("pathao/token");
+            const access_token_pathao = JSON.stringify(response.data.access_token);
+            localStorage.setItem('access_token_pathao', access_token_pathao);
+
+        } catch (error) {
+            alertService.error(error.message);
+        }
+    },
+
+    async fetchCitys() {
+            axios.get("pathao/cities", {
+            })
+            .then(response => {
+                console.log(response.data); // Debug response
+                // Process response data here
+                // this.areas = response.data.data;  // Example of assigning the response to a data property
+            })
+            .catch(error => {
+                alertService.error(error.message);
+            });
+       
+    },
+        // fetchCitys() {
+        //     axios.get("pathao/cities", {
+        //         headers: {
+        //             'Authorization': `${this.access_token}`
+        //         }
+        //     })
+        //     .then(response => {
+        //         // this.citys = response.data.data;
+        //         console.log(this.access_token);
+        //     })
+        //     .catch(error => {
+        //         alertService.error(error.message);
+        //     });
+        // },
+        fetchZones() {
+            axios.get("pathao/cities/{{city_id}}/zones")
+            .then(response => {
+                // console.log(response.data.areas);
+                this.areas = response.data.areas;
+                // this.areas = response.data.areas.map(item => item.name);
+                
+            })
+            .catch(error => {
+                alertService.error(error.message);
+            });
+        },
         fetchAreas() {
             axios.get("get_area_list")
             .then(response => {
@@ -484,8 +584,6 @@ export default {
             .then(response => {
                 this.info = response.data.data;
                 this.courier_name = response.data.courier_name;
-                console.log(this.info);
-                
             })
             .catch(error => {
                 alertService.error(error.message);
@@ -569,30 +667,61 @@ export default {
             this.loading.isActive = true;
             const selectedCourier = document.querySelector("#courier_select_option").value;
             const area_id = document.querySelector("#area_select_option").value;
+
             if (!selectedCourier || selectedCourier === "") {
                 this.loading.isActive = false;
                 alertService.error("Please select a courier");
                 return;
             }
-            axios.post("admin/online-order/sendCourier", {
+
+            let payload = {
                 courier: selectedCourier,
-                area_id: area_id,
-                area_name : this.selectedAreaName,
-                weight: this.weight,
                 id: this.$route.params.id,
-            }).then(response => {
-                this.loading.isActive = false;
-                if(response.data['status']){
-                    alertService.success(response.data['message']);
-                }else{
-                    alertService.error(response.data['message']);
-                };
-            }).catch(error => {
-                this.loading.isActive = false;
-                alertService.error(error.message);
-            });
+            };
+
+            if (selectedCourier === 'Pathao') {
+                // Pathao-specific keys
+                let pathao_city_id = document.querySelector("#pathao_city_select_option").value;
+                let pathao_zone_id = document.querySelector("#pathao_zone_select_option").value;
+                let pathao_area_id = document.querySelector("#pathao_area_select_option").value;
+                let pathao_area_name = this.selectedAreaName;
+                let weight = this.weight;
+
+                payload.pathao_city_id = pathao_city_id;
+                payload.pathao_zone_id = pathao_zone_id;
+                payload.pathao_area_id = pathao_area_id;
+                payload.pathao_area_name = pathao_area_name;
+                payload.weight = weight;
+            } else if (selectedCourier !== 'Steadfast') {
+                // Redex or other couriers
+                payload.area_id = area_id;
+                payload.area_name = this.selectedAreaName;
+                payload.weight = this.weight;
+            }
+
+            this.loading.isActive = true; // Start loading
+
+            axios.post("admin/online-order/sendCourier", payload)
+                .then(response => {
+                    this.loading.isActive = false;
+                    response.data.status
+                        ? alertService.success(response.data.message)
+                        : alertService.error(response.data.message);
+                })
+                .catch(error => {
+                    this.loading.isActive = false;
+                    alertService.error(error.message);
+                });
         }
+
     },
+    // watch: {
+    //     access_token(newToken) {
+    //         if (newToken) {
+    //             this.fetchCitys(); // Automatically fetch cities when token is updated
+    //         }
+    //     }
+    // }
 
 
 }
