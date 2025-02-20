@@ -175,8 +175,8 @@
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
                 <div v-if="isInfoAvailable()"  class="db-card p-1">
-                    <h3 class="db-card-title">Couriere Info</h3>
-                    <div class="grid grid-cols-2 gap-3 p-3">
+                    <h3 class="db-card-title">Couriere Info({{ courier_name }})</h3>
+                    <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Steadfast'">
                         <div class="text-sm capitalize font-semibold">Consignment ID:</div>
                         <div class="text-sm capitalize">{{ info.consignment_id }}</div>
                         <div class="text-sm capitalize font-semibold">Invoice:</div>
@@ -196,6 +196,25 @@
                         <div class="text-sm capitalize font-semibold">Note:</div>
                         <div class="text-sm capitalize">{{ info.note }}</div>
                     </div>
+                    <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Redex'">
+                        <div class="text-sm capitalize font-semibold">Customer Name:</div>
+                        <div class="text-sm capitalize">{{info.customer_name}}</div>
+                        <div class="text-sm capitalize font-semibold">Customer Phone:</div>
+                        <div class="text-sm capitalize">{{info.customer_phone}}</div>
+                        <div class="text-sm capitalize font-semibold">Customer Address:</div>
+                        <div class="text-sm capitalize">{{info.customer_address}}</div>
+                        <div class="text-sm capitalize font-semibold">Delivery Area:</div>
+                        <div class="text-sm capitalize">{{info.delivery_area}}</div>
+                        <div class="text-sm capitalize font-semibold">ID:</div>
+                        <div class="text-sm capitalize">{{info.id}}</div>
+                        <div class="text-sm capitalize font-semibold">Invoice:</div>
+                        <div class="text-sm capitalize">{{info.invoice}}</div>
+                        <div class="text-sm capitalize font-semibold">Order ID:</div>
+                        <div class="text-sm capitalize">{{ info.order_id }}</div>
+                        <div class="text-sm capitalize font-semibold">Tracking ID:</div>
+                        <div class="text-sm capitalize">{{ info.tracking_id }}</div>
+                    </div>
+
                 </div>
 
                 <div v-else class="db-card p-1">
@@ -213,7 +232,8 @@
                                 {{ area.name }}
                             </option>
                         </select>
-                        <input type="text" v-model="weight">
+                        <input class="rounded border border-primary bg-white text-primary" type="text" v-model="weight"
+                            placeholder="Product Weight [Kg]">
                         <button type="button" @click="sendCourier($event)"
                             class="flex items-center justify-center text-white gap-2 px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
                             Send
@@ -222,7 +242,7 @@
                 </div>
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress.length > 0"
-                v-for="address in orderAddress">
+                v-for="address in orderAddress" :key="address">
                 <div class="db-card">
                     <div class="db-card-header">
                         <h3 class="db-card-title" v-if="address.address_type === enums.addressTypeEnum.SHIPPING">
@@ -302,7 +322,6 @@
                         </ul>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -342,6 +361,7 @@ export default {
             area_name: '',
             weight: '',
             info: [],
+            courier_name: '',
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
                 addressTypeEnum: addressTypeEnum,
@@ -463,6 +483,9 @@ export default {
             axios.get("admin/online-order/checkCourierStatus/" + this.$route.params.id)
             .then(response => {
                 this.info = response.data.data;
+                this.courier_name = response.data.courier_name;
+                console.log(this.info);
+                
             })
             .catch(error => {
                 alertService.error(error.message);
@@ -565,7 +588,6 @@ export default {
                     alertService.error(response.data['message']);
                 };
             }).catch(error => {
-
                 this.loading.isActive = false;
                 alertService.error(error.message);
             });

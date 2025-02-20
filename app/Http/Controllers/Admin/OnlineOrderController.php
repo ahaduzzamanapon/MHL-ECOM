@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Exception;
 use App\Models\Order;
 use App\Models\SteadfastCourier;
+use App\Models\RedexCourierModel;
 use App\Exports\OrderExport;
 use App\Services\OrderService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -106,9 +107,13 @@ class OnlineOrderController extends AdminController
         // dd($order->courier_id);
         try {
             if ($order->courier_id != null && $order->courier_type == 'Steadfast') { 
-                 $info = SteadfastCourier::where('invoice', $order->order_serial_no)->first();
-                return response(['status' => true, 'data' => $info], 200);
-            } else {
+                $info = SteadfastCourier::where('invoice', $order->order_serial_no)->first();
+                return response(['status' => true, 'data' => $info,'courier_name'=> $order->courier_type], 200);
+            }elseif ($order->courier_id != null && $order->courier_type == 'Redex') { 
+                $info = RedexCourierModel::where('invoice', $order->order_serial_no)->first();
+                return response(['status' => true, 'data' => $info,'courier_name'=> $order->courier_type], 200);
+            } 
+            else {
                  return new OrderDetailsResource($this->orderService->show($order, false));
             }
         } catch (Exception $exception) {
