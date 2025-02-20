@@ -112,6 +112,8 @@ use App\Http\Controllers\Frontend\ProductVariationController as FrontendProductV
 use App\Http\Controllers\Frontend\PromotionProductController as FrontendPromotionProductController;
 use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendProductSectionProductController;
 use App\Http\Controllers\RedxCourierController;
+use App\Http\Controllers\PathaoCourierController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -127,6 +129,19 @@ use App\Http\Controllers\RedxCourierController;
 Route::post('/get_product_by_sku', [ProductController::class, 'get_product_by_sku']);
 Route::post('/courier_status', [OnlineOrderController::class, 'courier_status']);
 Route::get('/get_area_list', [RedxCourierController::class, 'get_area_list']);
+
+
+Route::post('/pathao/token', [PathaoCourierController::class, 'issueAccessToken']);
+Route::post('/pathao/refresh-token', [PathaoCourierController::class, 'issueRefreshToken']);
+Route::post('/pathao/create-store', [PathaoCourierController::class, 'createStore']);
+Route::post('/pathao/create-order', [PathaoCourierController::class, 'createOrder']);
+Route::post('/pathao/create-bulk-order', [PathaoCourierController::class, 'createBulkOrder']);
+Route::get('/pathao/order-info/{orderId}', [PathaoCourierController::class, 'getOrderInfo']);
+Route::get('/pathao/cities', [PathaoCourierController::class, 'getCityList']);
+Route::get('/pathao/cities/{cityId}/zones', [PathaoCourierController::class, 'getZones']);
+Route::get('/pathao/zones/{zoneId}/areas', [PathaoCourierController::class, 'getAreas']);
+Route::post('/pathao/calculate-price', [PathaoCourierController::class, 'calculatePrice']);
+Route::get('/pathao/stores', [PathaoCourierController::class, 'getMerchantStoreInfo']);
 
 
 
