@@ -718,7 +718,7 @@ export default {
                 store_id: '148064',  
                 merchant_order_id: this.order.order_serial_no,  
                 recipient_name: this.orderAddress[0].full_name,  
-                recipient_phone: this.orderAddress[0].phone,  
+                recipient_phone: 0+''+this.orderAddress[0].phone,  
                 recipient_address: this.orderAddress[0].address,  
                 recipient_city: this.pathao_city_id,  
                 recipient_zone: this.pathao_zone_id, 

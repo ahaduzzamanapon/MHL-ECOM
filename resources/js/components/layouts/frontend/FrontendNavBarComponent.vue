@@ -136,7 +136,17 @@
                     </span>
                 </router-link>
                 <!-- WishList End -->
-
+                <!-- Card Button Start -->
+                <button @click.prevent="showTarget('cart-canvas', 'canvas-active')" type="button"
+                    class="hidden lg:block flex-shrink-0 relative">
+                    <i
+                        class="lab-line-bag text-xl w-10 h-10 !leading-10 text-center rounded-full bg-secondary text-white"></i>
+                    <span v-if="carts.length > 0"
+                        class="absolute top-4 ltr:right-1 rtl:left-1 text-[10px] font-medium h-4 px-1 leading-[14px] text-center rounded-full border border-heading text-white bg-primary">
+                        {{ carts.length }}
+                    </span>
+                </button>
+                <!-- Card Button End -->
 
                 <!-- My Account Start -->
                 <div class="relative hidden lg:block group">
@@ -238,17 +248,7 @@
                 </div>
                 <!-- My Account End -->
 
-                <!-- Card Button Start -->
-                <button @click.prevent="showTarget('cart-canvas', 'canvas-active')" type="button"
-                    class="hidden lg:block flex-shrink-0 relative">
-                    <i
-                        class="lab-line-bag text-xl w-10 h-10 !leading-10 text-center rounded-full bg-secondary text-white"></i>
-                    <span v-if="carts.length > 0"
-                        class="absolute top-4 ltr:right-1 rtl:left-1 text-[10px] font-medium h-4 px-1 leading-[14px] text-center rounded-full border border-heading text-white bg-primary">
-                        {{ carts.length }}
-                    </span>
-                </button>
-                <!-- Card Button End -->
+             
             </div>
         </div>
     </header>

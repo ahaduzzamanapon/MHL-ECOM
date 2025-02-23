@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\PathaoCourier;
+use App\Models\Order;
 
 class PathaoCourierController extends Controller
 {
@@ -91,7 +93,49 @@ class PathaoCourierController extends Controller
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/orders", $request->all());
 
-        return response()->json($response->json());
+        $ress_data=$response->json();
+        // array:4 [ // app\Http\Controllers\PathaoCourierController.php:94
+        //     "message" => "Order Created Successfully"
+        //     "type" => "success"
+        //     "code" => 200
+        //     "data" => array:4 [
+        //       "consignment_id" => "DT230225PF6HA5"
+        //       "merchant_order_id" => "11022516"
+        //       "order_status" => "Pending"
+        //       "delivery_fee" => 360
+        //     ]
+        //   ]
+
+        $pathao= new PathaoCourier;
+        $pathao->store_id=$request->store_id;
+        $pathao->merchant_order_id=$request->merchant_order_id;
+        $pathao->recipient_name=$request->recipient_name;
+        $pathao->recipient_phone=$request->recipient_phone;
+        $pathao->recipient_address=$request->recipient_address;
+        $pathao->recipient_city=$request->recipient_city;
+        $pathao->recipient_zone=$request->recipient_zone;
+        $pathao->recipient_area=$request->recipient_area;
+        $pathao->delivery_type=$request->delivery_type;
+        $pathao->item_type=$request->item_type;
+        $pathao->special_instruction=$request->special_instruction;
+        $pathao->item_quantity=$request->item_quantity;
+        $pathao->item_weight=$request->item_weight;
+        $pathao->item_description=$request->item_description;
+        $pathao->amount_to_collect=$request->amount_to_collect;
+        $pathao->consignment_id=$ress_data['data']['consignment_id'];
+        $pathao->order_status=$ress_data['data']['order_status'];
+        $pathao->delivery_fee=$ress_data['data']['delivery_fee'];
+        $pathao->save();
+
+        if ($response->json()['type'] == 'success') {
+            $order = Order::where('order_serial_no', $request->merchant_order_id)->first();
+            $order->courier_id = $pathao->id;
+            $order->courier_type = 'Pathao';
+            $order->save();
+            return ['status' => true, 'message' => "Order sent to courier Successfully"];
+        }else{
+            return ['status' => false, 'message' => "Order sent to courier Failed"];
+        }
     }
 
     // 5️⃣ Create a Bulk Order

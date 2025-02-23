@@ -1,7 +1,8 @@
 <template>
     <SliderComponent />
 
-    <CategoryComponent />
+    <!-- <CategoryComponent /> -->
+     <br>
 
     <PromotionComponent />
 
