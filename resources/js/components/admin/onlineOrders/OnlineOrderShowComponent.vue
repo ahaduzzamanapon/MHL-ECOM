@@ -236,48 +236,83 @@
 
                 </div>
 
-                <div v-else class="db-card p-1 ">
-                    <h3 class="db-card-title">Select Courier </h3>
-                    <div class="flex items-center">
-                        <div class=" gap-3 p-3">
-                            <select id="courier_select_option" v-model="selectedCourier"
-                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
-                                <option value="" selected>Select Courier</option>
-                                <option>Steadfast</option>
-                                <option>Redex</option>
-                                <option>Pathao</option>
-                            </select>
-                        </div>
-                        <div class="gap-3 p-3">
-                            <select id="pathao_city_select_option" v-model="city_name"
-                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
-                                <option value="" selected>Select Area</option>
-                                <option v-for="city in citys"  :value="city.city_id">
-                                    {{ city.city_name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="gap-3 p-3">
-                            <select id="area_select_option" v-model="area_name"
-                                class="text-sm capitalize appearance-none pl-4 pr-4 h-[38px] rounded border border-primary bg-white text-primary">
-                                <option value="" selected>Select Area</option>
-                                <option v-for="area in areas"  :value="area.id">
-                                    {{ area.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="gap-3 p-3">
-                            <input class="rounded border border-primary bg-white pl-4 pr-4 text-primary h-[38px]" type="text" v-model="weight"
-                                placeholder="Product Weight [Kg]">
-                        </div>
-                    </div>    
-                    <div class="gap-3 p-3">
-                        <button type="button" @click="sendCourier($event)"
-                            class="flex items-center justify-center text-white gap-2 px-4  h-[38px] rounded shadow-db-card bg-[#ff6912]">
-                            Send
-                        </button>
-                    </div>
-                </div>
+ <div class="db-card" v-else>
+    <!-- Tab Menu -->
+    <div class="flex border-b">
+      <button 
+        v-for="(tab, index) in tabs" 
+        :key="index" 
+        @click="activeTab = tab.key"
+        :class="['px-4 py-2', activeTab === tab.key ? 'bg-orange-500 text-white' : 'bg-gray-200']"
+      
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="p-4 border rounded-b-lg">
+      <!-- Steadfast Tab -->
+      <div v-if="activeTab === 'steadfast'">
+        <div class="db-card p-4">
+          <h3 class="db-card-title">Send To SteadFast</h3>
+          <button type="button" @click="sendCourier('Steadfast')"
+            class="flex items-center justify-center text-white px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
+            Send
+          </button>
+        </div>
+      </div>
+
+      <!-- RedX Tab -->
+      <div v-if="activeTab === 'redx'">
+        <div class="db-card p-4">
+          <h3 class="db-card-title">Send To RedX</h3>
+          <div class="mt-2 flex flex-col gap-3">
+            <select v-model="area_name" class="border px-4 py-2 rounded">
+              <option value="" selected>Select Area</option>
+              <option v-for="area in areas" :key="area.id" :value="area.id">
+                {{ area.name }}
+              </option>
+            </select>
+            <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
+            <button type="button" @click="sendCourier('Redex')" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pathao Tab -->
+      <div v-if="activeTab === 'pathao'">
+        <div class="db-card p-4">
+          <h3 class="db-card-title">Send To Pathao</h3>
+          <div class="mt-2 flex flex-col gap-3">
+            <select v-model="city_name" class="border px-4 py-2 rounded">
+              <option value="" selected>Select City Name</option>
+              <option v-for="city in cities" :key="city.id" :value="city.city_id">
+                {{ city.city_name }}
+              </option>
+            </select>
+            <select class="border px-4 py-2 rounded">
+              <option value="" selected>Select Zone Name</option>
+              <option>Zone Name</option>
+            </select>
+            <select class="border px-4 py-2 rounded">
+              <option value="" selected>Select Area Name</option>
+              <option>Area Name</option>
+            </select>
+            <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
+            <button type="button" @click="sendCourier('Pathao')" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress.length > 0"
                 v-for="address in orderAddress" :key="address">
@@ -398,10 +433,12 @@ export default {
             access_token: '',
             token_type: '',
             // couriers: "redex",
-            citys: [],
+            cities: [],
             city_name: '',
             zones: [],
             zone_name: '', 
+            pathao_areas: [],
+            pathao_area_name: '',
             areas: [],
             area_name: '',
             weight: '',
@@ -410,6 +447,11 @@ export default {
             pathao_city_id: '',
             pathao_zone_id: '',
             pathao_area_id: '',
+                  tabs: [
+        { key: 'steadfast', label: 'Steadfast' },
+        { key: 'redx', label: 'RedX' },
+        { key: 'pathao', label: 'Pathao' },
+      ],activeTab: 'steadfast',
             enums: {
                 paymentStatusEnum: paymentStatusEnum,
                 addressTypeEnum: addressTypeEnum,
@@ -469,9 +511,10 @@ export default {
         }
     },
     created() {
-        this.accessToken();
-        this.fetchAreas();
         this.fetchCitys();
+        // this. fetchZones();
+        // this.fetchAreasPathao();
+        this.fetchAreas();
         this.checkCourierStatus();
     },
     computed: {
@@ -517,67 +560,32 @@ export default {
         orderStatusClass: function (status) {
             return appService.orderStatusClass(status);
         },
-      async accessToken() { 
-        try {
-            const response = await axios.post("pathao/token");
-            const access_token_pathao = JSON.stringify(response.data.access_token);
-            localStorage.setItem('access_token_pathao', access_token_pathao);
 
-        } catch (error) {
-            alertService.error(error.message);
-        }
-    },
-
-    async fetchCitys() {
-            axios.get("pathao/cities", {
-            })
-            .then(response => {
-                console.log(response.data); // Debug response
-                // Process response data here
-                // this.areas = response.data.data;  // Example of assigning the response to a data property
-            })
-            .catch(error => {
+        fetchCitys : function() {
+            axios.get("pathao/cities").then(response => {
+                this.cities = response.data.data.data;
+            }).catch(error => {
                 alertService.error(error.message);
             });
-       
-    },
-        // fetchCitys() {
-        //     axios.get("pathao/cities", {
-        //         headers: {
-        //             'Authorization': `${this.access_token}`
-        //         }
-        //     })
+        },
+        // fetchZones() {
+        //     axios.get("pathao/cities/" + this.pathao_city_id + "/zones")
         //     .then(response => {
-        //         // this.citys = response.data.data;
-        //         console.log(this.access_token);
+        //         this.zones = response.data.data.data;
         //     })
         //     .catch(error => {
         //         alertService.error(error.message);
         //     });
         // },
-        fetchZones() {
-            axios.get("pathao/cities/{{city_id}}/zones")
-            .then(response => {
-                // console.log(response.data.areas);
-                this.areas = response.data.areas;
-                // this.areas = response.data.areas.map(item => item.name);
-                
-            })
-            .catch(error => {
-                alertService.error(error.message);
-            });
-        },
-        fetchAreas() {
+
+        fetchAreas: function() {
             axios.get("get_area_list")
-            .then(response => {
-                // console.log(response.data.areas);
-                this.areas = response.data.areas;
-                // this.areas = response.data.areas.map(item => item.name);
-                
-            })
-            .catch(error => {
-                alertService.error(error.message);
-            });
+                .then(response => {
+                    this.areas = response.data.areas;
+                })
+                .catch(error => {
+                    alertService.error(error.message)
+                });
         },
         checkCourierStatus() {
             axios.get("admin/online-order/checkCourierStatus/" + this.$route.params.id)
@@ -663,23 +671,23 @@ export default {
                 alertService.error(err.response.data.message);
             }
         },
-        sendCourier: function () {
+        sendCourier($event, courier_name) {
             this.loading.isActive = true;
-            const selectedCourier = document.querySelector("#courier_select_option").value;
-            const area_id = document.querySelector("#area_select_option").value;
+            // const selectedCourier = document.querySelector("#courier_select_option").value;
+            // const area_id = document.querySelector("#area_select_option").value;
 
-            if (!selectedCourier || selectedCourier === "") {
-                this.loading.isActive = false;
-                alertService.error("Please select a courier");
-                return;
-            }
+            // if (!courier || courier === "") {
+            //     this.loading.isActive = false;
+            //     alertService.error("Please select a courier");
+            //     return;
+            // }
 
             let payload = {
-                courier: selectedCourier,
+                courier: courier_name,
                 id: this.$route.params.id,
             };
 
-            if (selectedCourier === 'Pathao') {
+            if (courier_name === 'Pathao') {
                 // Pathao-specific keys
                 let pathao_city_id = document.querySelector("#pathao_city_select_option").value;
                 let pathao_zone_id = document.querySelector("#pathao_zone_select_option").value;
@@ -692,7 +700,7 @@ export default {
                 payload.pathao_area_id = pathao_area_id;
                 payload.pathao_area_name = pathao_area_name;
                 payload.weight = weight;
-            } else if (selectedCourier !== 'Steadfast') {
+            } else if (courier_name !== 'Steadfast') {
                 // Redex or other couriers
                 payload.area_id = area_id;
                 payload.area_name = this.selectedAreaName;
@@ -715,14 +723,5 @@ export default {
         }
 
     },
-    // watch: {
-    //     access_token(newToken) {
-    //         if (newToken) {
-    //             this.fetchCitys(); // Automatically fetch cities when token is updated
-    //         }
-    //     }
-    // }
-
-
 }
 </script>
