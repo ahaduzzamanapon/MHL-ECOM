@@ -346,14 +346,7 @@ class OrderService
                     return ['status' => false, 'message' => $error];
                 }
             }elseif($courier == "Redex"){
-                // $orderData = [
-                //     'invoice' => $order_details->order_serial_no,
-                //     'recipient_name' => $order_addresses->full_name,
-                //     'recipient_phone' => $order_addresses->country_code . $order_addresses->phone,
-                //     'recipient_address' => $order_addresses->address . ', ' . $order_addresses->city . ', ' . $order_addresses->state . ', ' . $order_addresses->country . ', ' . $order_addresses->zip_code,
-                //     'cod_amount' => $payment_amount,
-                //     'note' => $note
-                // ];
+
                 $response = RedxCourier::order()->create([
                     'customer_name' => $order_addresses->full_name,
                     'customer_phone' => $order_addresses->country_code . $order_addresses->phone,
