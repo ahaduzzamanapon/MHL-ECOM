@@ -268,7 +268,7 @@
         <div class="db-card p-4">
           <h3 class="db-card-title">Send To RedX</h3>
           <div class="mt-2 flex flex-col gap-3">
-            <select v-model="area_name" class="border px-4 py-2 rounded">
+            <select  class="border px-4 py-2 rounded" v-model="redx_area_id">
               <option value="" selected>Select Area</option>
               <option v-for="area in areas" :key="area.id" :value="area.id">
                 {{ area.name }}
@@ -435,12 +435,13 @@ export default {
             // couriers: "redex",
             cities: [],
             city_name: '',
+            redx_area_id:'',
             zones: [],
             zone_name: '', 
             pathao_areas: [],
             pathao_area_name: '',
             areas: [],
-            area_name: '',
+            // area_name: '',
             weight: '',
             info: [],
             courier_name: '',
@@ -598,7 +599,8 @@ export default {
             });
         },
         isInfoAvailable() {
-        return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
+            console.log(this.info);
+            return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
         },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
@@ -671,10 +673,10 @@ export default {
                 alertService.error(err.response.data.message);
             }
         },
-        sendCourier($event, courier_name) {
+        sendCourier(courier_name) {
             this.loading.isActive = true;
             // const selectedCourier = document.querySelector("#courier_select_option").value;
-            // const area_id = document.querySelector("#area_select_option").value;
+           
 
             // if (!courier || courier === "") {
             //     this.loading.isActive = false;
@@ -692,7 +694,7 @@ export default {
                 let pathao_city_id = document.querySelector("#pathao_city_select_option").value;
                 let pathao_zone_id = document.querySelector("#pathao_zone_select_option").value;
                 let pathao_area_id = document.querySelector("#pathao_area_select_option").value;
-                let pathao_area_name = this.selectedAreaName;
+                // let pathao_area_name = this.selectedAreaName;
                 let weight = this.weight;
 
                 payload.pathao_city_id = pathao_city_id;
@@ -702,8 +704,8 @@ export default {
                 payload.weight = weight;
             } else if (courier_name !== 'Steadfast') {
                 // Redex or other couriers
-                payload.area_id = area_id;
-                payload.area_name = this.selectedAreaName;
+                payload.area_id = this.redx_area_id;
+                // payload.area_name = this.selectedAreaName;
                 payload.weight = this.weight;
             }
 
