@@ -24,6 +24,10 @@
                 <form @submit.prevent="save('steadfast')" class="w-full">
                     <div class="form-row">
                         <div class="form-col-12">
+                            <label class="db-field-title">Steadfast Base URL</label>
+                            <input type="text" v-model="steadfast.base_url" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
                             <label class="db-field-title">Steadfast API Key</label>
                             <input type="text" v-model="steadfast.api_key" class="db-field-control" />
                         </div>
@@ -50,14 +54,14 @@
                 <form @submit.prevent="save('redex')" class="w-full">
                     <div class="form-row">
                         <div class="form-col-12">
-                            <label class="db-field-title">Redex API Key</label>
+                            <label class="db-field-title">Redex Sandbox</label>
                             <select v-model="redex.sandbox" class="db-field-control">
                                 <option value="true">True</option>
                                 <option value="false">False</option>
                             </select>
                         </div>
                         <div class="form-col-12">
-                            <label class="db-field-title">Redex Secret Key</label>
+                            <label class="db-field-title">Redex Access Token</label>
                             <input type="text" v-model="redex.access_token" class="db-field-control" />
                         </div>
                         <div class="form-col-12 mt-3">
@@ -79,12 +83,24 @@
                 <form @submit.prevent="save('pathao')" class="w-full">
                     <div class="form-row">
                         <div class="form-col-12">
-                            <label class="db-field-title">Pathao API Key</label>
-                            <input type="text" v-model="pathao.api_key" class="db-field-control" />
+                            <label class="db-field-title">Pathao Base URL</label>
+                            <input type="text" v-model="pathao.base_url" class="db-field-control" />
                         </div>
                         <div class="form-col-12">
-                            <label class="db-field-title">Pathao Secret Key</label>
-                            <input type="text" v-model="pathao.secret_key" class="db-field-control" />
+                            <label class="db-field-title">Pathao Client ID</label>
+                            <input type="text" v-model="pathao.client_id" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
+                            <label class="db-field-title">Pathao Client Secret</label>
+                            <input type="text" v-model="pathao.client_secret" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
+                            <label class="db-field-title">Pathao Username</label>
+                            <input type="text" v-model="pathao.username" class="db-field-control" />
+                        </div>
+                        <div class="form-col-12">
+                            <label class="db-field-title">Pathao Password</label>
+                            <input type="text" v-model="pathao.password" class="db-field-control" />
                         </div>
                         <div class="form-col-12 mt-3">
                             <button type="submit" class="db-btn text-white bg-primary">
@@ -113,34 +129,73 @@ export default {
                 isActive: false,
             },
             selectIndex: 'steadfast',
-            steadfast: { api_key: "", secret_key: "" },
-            redex: { sandbox: "", access_token: "" },
-            pathao: { api_key: "", secret_key: "" }
+            steadfast: {
+                base_url: "",
+                api_key: "",
+                secret_key: ""
+            },
+            redex: {
+                sandbox: "",
+                access_token: ""
+            },
+            pathao: {
+                base_url: "",
+                client_id: "",
+                client_secret: "",
+                username: "",
+                password: ""
+            }
         };
     },
-    created() {
-        this.fetchCouriers();
+    mounted() {
+        setTimeout(() => {
+            this.fetchCouriers();
+        }, 1000);
     },
     methods: {
-        fetchCouriers() {
+        save(courier) {
             this.loading.isActive = true;
-            axios.get("admin/setting/courier")
+            axios.post('/settings/courier/insert', {
+                name: courier,
+                base_url: this[courier].base_url,
+                api_key: this[courier].api_key,
+                secret_key: this[courier].secret_key,
+                sandbox: this[courier].sandbox,
+                access_token: this[courier].access_token,
+                client_id: this[courier].client_id,
+                client_secret: this[courier].client_secret,
+                username: this[courier].username,
+                password: this[courier].password,
+            })
+            .then(response => {
+                this.loading.isActive = false;
+                alertService.success(response.config.method === "put" ? 'Updated' : 'Saved');
+            })
+            .catch(error => {
+                this.loading.isActive = false;
+                alertService.error(error.message);
+            });
+        }
+    },
+    computed: {
+       fetchCouriers() {
+            this.loading.isActive = true;
+            axios.get('/settings/couriers') // Update this URL to your API endpoint
                 .then(response => {
-                    // console.log("Fetched Data:", response.data); // Debugging
+                    const data = response.data;
+                    
+                    this.steadfast.base_url = data.steadfast.base_url;
+                    this.steadfast.api_key = data.steadfast.api_key;
+                    this.steadfast.secret_key = data.steadfast.secret_key;
 
-                    response.data.forEach(item => {
-                        const name = item.name?.toLowerCase(); // Normalize name
-                        if (name === 'steadfast') {
-                            this.steadfast.api_key = item.api_key || "";
-                            this.steadfast.secret_key = item.secret_key || "";
-                        } else if (name === 'redex') {
-                            this.redex.sandbox = item.sandbox || "";
-                            this.redex.access_token = item.access_token || "";
-                        } else if (name === 'pathao') {
-                            this.pathao.api_key = item.api_key || "";
-                            this.pathao.secret_key = item.secret_key || "";
-                        }
-                    });
+                    this.redex.sandbox = data.redex.sandbox;
+                    this.redex.access_token = data.redex.access_token;
+
+                    this.pathao.base_url = data.pathao.base_url;
+                    this.pathao.client_id = data.pathao.client_id;
+                    this.pathao.client_secret = data.pathao.client_secret;
+                    this.pathao.username = data.pathao.username;
+                    this.pathao.password = data.pathao.password;
 
                     this.loading.isActive = false;
                 })
@@ -150,24 +205,7 @@ export default {
                     this.loading.isActive = false;
                 });
         },
-        save(courier) {
-            this.loading.isActive = true;
-            axios.post("admin/setting/courier/insert", {
-                type: "courier",
-                value: this[courier],
-                key: courier
-            }).then(response => {
-                this.loading.isActive = false;
-                if (response.data.success) {
-                    alertService.success(response.data.message);
-                } else {
-                    alertService.error(response.data.message || response.data.errors);
-                }
-            }).catch(error => {
-                this.loading.isActive = false;
-                alertService.error(error.response.data.message || error.response.data.errors);
-            });
-        }
     }
 };
 </script>
+
