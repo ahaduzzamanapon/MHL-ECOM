@@ -217,21 +217,56 @@
 
                     <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Pathao'">
                         <div class="text-sm capitalize font-semibold">Customer Name:</div>
-                        <div class="text-sm capitalize">{{info.customer_name}}</div>
+                        <div class="text-sm capitalize">{{ info.recipient_name }}</div>
+
                         <div class="text-sm capitalize font-semibold">Customer Phone:</div>
-                        <div class="text-sm capitalize">{{info.customer_phone}}</div>
+                        <div class="text-sm capitalize">{{ info.recipient_phone }}</div>
+
                         <div class="text-sm capitalize font-semibold">Customer Address:</div>
-                        <div class="text-sm capitalize">{{info.customer_address}}</div>
-                        <div class="text-sm capitalize font-semibold">Delivery Area:</div>
-                        <div class="text-sm capitalize">{{info.delivery_area}}</div>
+                        <div class="text-sm capitalize">{{ info.recipient_address }}</div>
+
+                        <!-- <div class="text-sm capitalize font-semibold">Delivery Area:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_area }}</div>
+
+                        <div class="text-sm capitalize font-semibold">City:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_city }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Zone:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_zone }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Area:</div>
+                        <div class="text-sm capitalize">{{ info.recipient_area }}</div> -->
+
+                        <div class="text-sm capitalize font-semibold">Delivery Fee:</div>
+                        <div class="text-sm capitalize">{{ info.delivery_fee }} Tk.</div>
+
+                        <div class="text-sm capitalize font-semibold">Delivery Type:</div>
+                        <div class="text-sm capitalize">{{ info.delivery_type }}</div>
+
                         <div class="text-sm capitalize font-semibold">ID:</div>
-                        <div class="text-sm capitalize">{{info.id}}</div>
-                        <div class="text-sm capitalize font-semibold">Invoice:</div>
-                        <div class="text-sm capitalize">{{info.invoice}}</div>
-                        <div class="text-sm capitalize font-semibold">Order ID:</div>
-                        <div class="text-sm capitalize">{{ info.order_id }}</div>
-                        <div class="text-sm capitalize font-semibold">Tracking ID:</div>
-                        <div class="text-sm capitalize">{{ info.tracking_id }}</div>
+                        <div class="text-sm capitalize">{{ info.id }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Item Description:</div>
+                        <div class="text-sm capitalize">{{ info.item_description }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Item Quantity:</div>
+                        <div class="text-sm capitalize">{{ info.item_quantity }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Item Weight:</div>
+                        <div class="text-sm capitalize">{{ info.item_weight }} Kg.</div>
+
+                        <div class="text-sm capitalize font-semibold">Order Status:</div>
+                        <div class="text-sm capitalize">{{ info.order_status }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Merchant Order ID:</div>
+                        <div class="text-sm capitalize">{{ info.merchant_order_id }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Special Instruction:</div>
+                        <div class="text-sm capitalize">{{ info.special_instruction }}</div>
+
+                        <div class="text-sm capitalize font-semibold">Store ID:</div>
+                        <div class="text-sm capitalize">{{ info.store_id }}</div>
+
                     </div>
 
                 </div>
@@ -306,7 +341,7 @@
                         </option>
                         </select>
                         <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
-                        <input type="text" v-model="amount_taka" class="border px-4 py-2 rounded"  v-if="enums.paymentStatusEnumArray[order.payment_status]==='Unpaid'" >
+
                         <button type="button" @click="sendPathaoCourier" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
                         Send
                         </button>
@@ -522,6 +557,8 @@ export default {
         }
     },
     created() {
+        this.fetchCitys();
+        this.fetchAreass();
         this.fetchAreas();
         this.checkCourierStatus();
     },
@@ -547,9 +584,7 @@ export default {
         },
     },
     mounted() {
-        this.loading.isActive = true;
-        this.fetchCitys();  // Fetch cities on mount
-        this.fetchAreass(); 
+        this.loading.isActive = true; 
         this.checkCourierStatus();
         this.$store.dispatch('onlineOrder/show', this.$route.params.id).then(res => {
             this.payment_status = res.data.data.payment_status;
@@ -580,13 +615,19 @@ export default {
             .then(response => {
                 this.info = response.data.data;
                 this.courier_name = response.data.courier_name;
+                // console.log(this.info);
             })
             .catch(error => {
                 alertService.error(error.message);
             });
         },
         isInfoAvailable() {
-            return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
+            if (this.courier_name != 'Pathao') { 
+                return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
+            }
+            if (this.courier_name == 'Pathao') { 
+                return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
+            }
         },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
@@ -660,32 +701,48 @@ export default {
             }
         },
         fetchCitys() {
+            this.loading.isActive = true;
             axios.get("pathao/cities")
                 .then(response => {
                     this.cities = response.data.data.data;
+                    this.loading.isActive = false;
+
             })
             .catch(error => {
                 alertService.error(error.message);
+                this.loading.isActive = false;
+
             });
         },
         fetchZones: debounce(function () {
             if (!this.pathao_city_id) return;
+            this.loading.isActive = true;
+
             axios.get(`pathao/cities/${this.pathao_city_id}/zones`)
                 .then(response => {
                     this.zones = response.data.data.data;
+                    this.loading.isActive = false;
+
             })
             .catch(error => {
                 alertService.error(error.message);
+                    this.loading.isActive = false;
+
             });
         }, 300),
         fetchAreass: debounce(function () {
-                if (!this.pathao_zone_id) return;
+            if (!this.pathao_zone_id) return;
+                this.loading.isActive = true;
                 axios.get(`pathao/zones/${this.pathao_zone_id}/areas`)
                     .then(response => {
                         this.pataho_areas = response.data.data.data;
+                        this.loading.isActive = false;
+
                     })
                     .catch(error => {
                         alertService.error(error.message);
+                        this.loading.isActive = false;
+
                     });
         }, 300),
         sendCourier(courier_name) {
@@ -713,6 +770,21 @@ export default {
             });
         },
         sendPathaoCourier() {
+            // console.log(this.order); return false;
+            if (this.pathao_city_id == '') { 
+                alertService.error('City Required');  
+                return false;
+            }
+            if (this.pathao_zone_id == '') { 
+                  alertService.error('Zone Required');
+                  return false;
+            }
+            if (this.pathao_area_id == '') { 
+                alertService.error('Area Required');
+                return false;
+            }
+
+            // order.total_currency_price 
             this.loading.isActive = true;
             let payload = {
                 store_id: '148064',  
@@ -729,13 +801,9 @@ export default {
                 item_quantity: 1,  
                 item_weight: this.weight,  
                 item_description: "this is a Cloth item, price- 3000",  
-                amount_to_collect: this.enums.paymentStatusEnumArray[this.order.payment_status]==='Unpaid' ? this.amount_taka :0,
+                amount_to_collect: this.enums.paymentStatusEnumArray[this.order.payment_status]==='Unpaid' ? this.order.total_amount_price :0,
             };
-
-
             // console.log(payload); return false;
-
-            
             this.loading.isActive = true; // Start loading
             axios.post("pathao/create-order", payload)
                 .then(response => {
@@ -743,6 +811,7 @@ export default {
                 response.data.status
                     ? alertService.success(response.data.message)
                     : alertService.error(response.data.message);
+                    // window.reload();
             })
             .catch(error => {
                 this.loading.isActive = false;
