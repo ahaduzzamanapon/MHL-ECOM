@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Order;
 use App\Models\SteadfastCourier;
 use App\Models\RedexCourierModel;
+use App\Models\PathaoCourier;
 use App\Exports\OrderExport;
 use App\Services\OrderService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -111,6 +112,9 @@ class OnlineOrderController extends AdminController
                 return response(['status' => true, 'data' => $info,'courier_name'=> $order->courier_type], 200);
             }elseif ($order->courier_id != null && $order->courier_type == 'Redex') { 
                 $info = RedexCourierModel::where('invoice', $order->order_serial_no)->first();
+                return response(['status' => true, 'data' => $info,'courier_name'=> $order->courier_type], 200);
+            } elseif ($order->courier_id != null && $order->courier_type == 'Pathao') { 
+                $info = PathaoCourier::where('merchant_order_id', $order->order_serial_no)->first();
                 return response(['status' => true, 'data' => $info,'courier_name'=> $order->courier_type], 200);
             } 
             else {

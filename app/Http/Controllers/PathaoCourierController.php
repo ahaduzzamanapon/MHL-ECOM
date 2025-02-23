@@ -106,7 +106,10 @@ class PathaoCourierController extends Controller
         //     ]
         //   ]
 
-        $pathao= new PathaoCourier;
+       
+
+        if ($response->json()['type'] == 'success') {
+             $pathao= new PathaoCourier;
         $pathao->store_id=$request->store_id;
         $pathao->merchant_order_id=$request->merchant_order_id;
         $pathao->recipient_name=$request->recipient_name;
@@ -126,8 +129,6 @@ class PathaoCourierController extends Controller
         $pathao->order_status=$ress_data['data']['order_status'];
         $pathao->delivery_fee=$ress_data['data']['delivery_fee'];
         $pathao->save();
-
-        if ($response->json()['type'] == 'success') {
             $order = Order::where('order_serial_no', $request->merchant_order_id)->first();
             $order->courier_id = $pathao->id;
             $order->courier_type = 'Pathao';
