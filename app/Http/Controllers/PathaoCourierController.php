@@ -58,24 +58,39 @@ class PathaoCourierController extends Controller
     {
         $this->issueAccessToken();
         $accessToken = $this->access_token;
-
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/stores", $request->all());
-
-
-
         return response()->json($response->json());
     }
 
     // 4️⃣ Create a New Order
     public function createOrder(Request $request)
     {
+        // dd($request->all());
+        // {
+        //     "store_id": {{merchant_store_id}},
+        //     "merchant_order_id": "{{merchant_order_id}}",
+        //     "recipient_name": "Demo Recipient",
+        //     "recipient_phone": "017XXXXXXXX",
+        //     "recipient_address": "Uttara , Sector -24, Dhaka",
+        //     "recipient_city": {{city_id}},
+        //     "recipient_zone": {{zone_id}},
+        //     "recipient_area": {{area_id}},
+        //     "delivery_type": 48,
+        //     "item_type": 2,
+        //     "special_instruction": "Need to Delivery before 5 PM",
+        //     "item_quantity": 1,
+        //     "item_weight": "0.5",
+        //     "item_description": "this is a Cloth item, price- 3000",
+        //     "amount_to_collect": 900
+        //   }
         $this->issueAccessToken();
         $accessToken = $this->access_token;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/orders", $request->all());
+
         return response()->json($response->json());
     }
 

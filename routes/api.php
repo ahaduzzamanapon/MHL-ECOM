@@ -131,6 +131,81 @@ Route::post('/courier_status', [OnlineOrderController::class, 'courier_status'])
 Route::get('/get_area_list', [RedxCourierController::class, 'get_area_list']);
 
 
+
+Route::get('/settings/couriers', function () {
+    return response()->json([
+        'steadfast' => [
+            'base_url' => env('STEADFAST_BASE_URL', 'https://portal.steadfast.com.bd/api/v1'),
+            'api_key' => env('STEADFAST_API_KEY'),
+            'secret_key' => env('STEADFAST_SECRET_KEY'),
+        ],
+        'redex' => [
+            'sandbox' => env('REDX_SANDBOX'),
+            'access_token' => env('REDX_ACCESS_TOKEN'),
+        ],
+        'pathao' => [
+            'base_url' => env('PATHAO_BASE_URL'),
+            'client_id' => env('PATHAO_CLIENT_ID'),
+            'client_secret' => env('PATHAO_CLIENT_SECRET'),
+            'username' => env('PATHAO_USERNAME'),
+            'password' => env('PATHAO_PASSWORD'),
+        ],
+    ]);
+});
+Route::post('settings/courier/insert', function (\Illuminate\Http\Request $request) {
+    $name = $request->name;
+    $envFile = base_path('.env');
+    $envLines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+    if ($name == 'steadfast') {
+        $envLines = array_map(function ($line) use ($request) {
+            if (strpos($line, 'STEADFAST_BASE_URL') === 0) {
+                return 'STEADFAST_BASE_URL=' . $request->base_url;
+            }
+            if (strpos($line, 'STEADFAST_API_KEY') === 0) {
+                return 'STEADFAST_API_KEY=' . $request->api_key;
+            }
+            if (strpos($line, 'STEADFAST_SECRET_KEY') === 0) {
+                return 'STEADFAST_SECRET_KEY=' . $request->secret_key;
+            }
+            return $line;
+        }, $envLines);
+    } elseif ($name == 'redex') {
+        $envLines = array_map(function ($line) use ($request) {
+            if (strpos($line, 'REDX_SANDBOX') === 0) {
+                return 'REDX_SANDBOX=' . $request->sandbox;
+            }
+            if (strpos($line, 'REDX_ACCESS_TOKEN') === 0) {
+                return 'REDX_ACCESS_TOKEN=' . $request->access_token;
+            }
+            return $line;
+        }, $envLines);
+    } elseif ($name == 'pathao') {
+        $envLines = array_map(function ($line) use ($request) {
+            if (strpos($line, 'PATHAO_BASE_URL') === 0) {
+                return 'PATHAO_BASE_URL=' . $request->base_url;
+            }
+            if (strpos($line, 'PATHAO_CLIENT_ID') === 0) {
+                return 'PATHAO_CLIENT_ID=' . $request->client_id;
+            }
+            if (strpos($line, 'PATHAO_CLIENT_SECRET') === 0) {
+                return 'PATHAO_CLIENT_SECRET=' . $request->client_secret;
+            }
+            if (strpos($line, 'PATHAO_USERNAME') === 0) {
+                return 'PATHAO_USERNAME=' . $request->username;
+            }
+            if (strpos($line, 'PATHAO_PASSWORD') === 0) {
+                return 'PATHAO_PASSWORD=' . $request->password;
+            }
+            return $line;
+        }, $envLines);
+    }
+
+    file_put_contents($envFile, implode("\n", $envLines));
+});
+
+
+
 Route::post('/pathao/token', [PathaoCourierController::class, 'issueAccessToken']);
 Route::post('/pathao/refresh-token', [PathaoCourierController::class, 'issueRefreshToken']);
 Route::post('/pathao/create-store', [PathaoCourierController::class, 'createStore']);
