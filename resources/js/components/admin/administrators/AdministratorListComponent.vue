@@ -270,7 +270,7 @@ export default {
                     this.props.form = {
                         name: administrator.name,
                         email: administrator.email,
-                        phone: administrator.phone,
+                        phone: "0" + administrator.phone,
                         password: administrator.password,
                         status: administrator.status,
                         country_code: administrator.country_code,

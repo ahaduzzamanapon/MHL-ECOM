@@ -287,7 +287,7 @@ export default {
             this.props.form = {
                 name: employee.name,
                 email: employee.email,
-                phone: employee.phone,
+                phone: "0"+employee.phone,
                 password: employee.password,
                 role_id: employee.role_id,
                 status: employee.status,
