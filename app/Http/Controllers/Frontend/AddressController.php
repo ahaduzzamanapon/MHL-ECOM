@@ -52,14 +52,7 @@ class AddressController extends Controller
     public function store(AddressRequest $request)
     {
         try {
-            $phone = ltrim($request->phone, '0');
-
-            // Validate the Bangladeshi phone number
-            if (!preg_match('/^01[3-9]\d{8}$/', $phone)) {
-                return response(['status' => false, 'message' => 'Invalid Bangladeshi phone number.'], 422);
-            }
-
-            $request->merge(['phone' => $phone]);
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new AddressResource($this->addressService->store($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
