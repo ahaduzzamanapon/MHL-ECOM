@@ -58,7 +58,8 @@
 
                             </div>
                             <input v-model="props.form.phone" v-on:keypress="phoneNumber($event)" v-bind:class="errors.phone
-                                ? 'invalid' : ''" type="text" id="phone" class="pl-2 text-sm w-full h-full" />
+                                ? 'invalid' : ''" type="text" id="phone" class="pl-2 text-sm w-full h-full"
+                                :pattern="/^[0-9]{10,}$/" title="Minimum 10 digit" />
                         </div>
 
                         <small class="db-field-alert" v-if="errors.phone">

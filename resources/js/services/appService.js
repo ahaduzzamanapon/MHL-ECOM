@@ -34,7 +34,7 @@ export default {
             return false;
         }
         if (input.length > 10) { 
-            alertService.error("Number cannot be more tahn 10 digit");
+            alertService.error("Number cannot be more than 10 digit");
             e.preventDefault();
         }
         if (/^[+]?[0-9]*$/.test(char)) return true;
