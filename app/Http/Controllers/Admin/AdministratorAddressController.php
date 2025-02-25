@@ -34,6 +34,7 @@ class AdministratorAddressController extends AdminController
     public function store(AdministratorAddressRequest $request, User $administrator): \Illuminate\Http\Response | AddressResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            
             return new AddressResource($this->userAddressService->store($request, $administrator));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

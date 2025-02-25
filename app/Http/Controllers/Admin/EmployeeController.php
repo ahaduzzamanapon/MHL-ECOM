@@ -44,6 +44,7 @@ class EmployeeController extends AdminController
     public function store(EmployeeRequest $request): \Illuminate\Http\Response | EmployeeResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new EmployeeResource($this->employeeService->store($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
@@ -53,6 +54,7 @@ class EmployeeController extends AdminController
     public function update(EmployeeRequest $request, User $employee): \Illuminate\Http\Response | EmployeeResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new EmployeeResource($this->employeeService->update($request, $employee));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

@@ -50,6 +50,7 @@ class CustomerController extends AdminController
     public function store(CustomerRequest $request
     ) : \Illuminate\Http\Response | CustomerResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new CustomerResource($this->customerService->store($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
@@ -61,6 +62,7 @@ class CustomerController extends AdminController
         User $customer
     ) : \Illuminate\Http\Response | CustomerResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new CustomerResource($this->customerService->update($request, $customer));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
