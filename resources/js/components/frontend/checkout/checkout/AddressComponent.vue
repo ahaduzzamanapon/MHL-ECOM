@@ -88,7 +88,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <input  placeholder="Phone Number Except 0; Ex: 123456789" v-model="address.form.phone" v-on:keypress="phoneNumber($event)" maxlength="11"
+                            <input  placeholder="Phone Number Except 0; Ex: 123456789" v-model="address.form.phone" v-on:keypress="phoneNumber($event)" maxlength="10"
                                 :class="errors.phone ? 'invalid' : ''" type="text" id="phone"
                                 class="pl-2 text-sm w-full h-full"
                                 :style="{ 'border-color': address.form.phone.length < 11 ? 'rgba(255, 0, 0, 0.1)' : '' }" />
@@ -376,6 +376,7 @@ export default {
                     this.activeAddress(res.data.data);
                 }).catch((err) => {
                     this.loading.isActive = false;
+                    alertService.error(err);
                     this.errors = err.response.data.errors;
                 });
             } catch (err) {

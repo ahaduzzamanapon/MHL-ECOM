@@ -93,18 +93,9 @@ class PathaoCourierController extends Controller
             'Authorization' => 'Bearer ' . $accessToken
         ])->post("{$this->baseUrl}/aladdin/api/v1/orders", $request->all());
 
+        
         $ress_data=$response->json();
-        // array:4 [ // app\Http\Controllers\PathaoCourierController.php:94
-        //     "message" => "Order Created Successfully"
-        //     "type" => "success"
-        //     "code" => 200
-        //     "data" => array:4 [
-        //       "consignment_id" => "DT230225PF6HA5"
-        //       "merchant_order_id" => "11022516"
-        //       "order_status" => "Pending"
-        //       "delivery_fee" => 360
-        //     ]
-        //   ]
+        
 
        
 
@@ -135,7 +126,11 @@ class PathaoCourierController extends Controller
             $order->save();
             return ['status' => true, 'message' => "Order sent to courier Successfully"];
         }else{
-            return ['status' => false, 'message' => "Order sent to courier Failed"];
+            $errorText = '';
+            foreach ($response->json()['errors'] as $key => $error) {
+                $errorText .= ucwords(str_replace('_', ' ', $key)) . ': ' . $error[0] . '. ';
+            }
+            return ['status' => false, 'message' => $errorText];
         }
     }
 
