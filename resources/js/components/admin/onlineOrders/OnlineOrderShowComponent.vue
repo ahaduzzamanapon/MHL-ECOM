@@ -287,7 +287,7 @@
                     <!-- Steadfast Tab -->
                     <div v-if="activeTab === 'steadfast'">
                         <div class="db-card p-4">
-                        <h3 class="db-card-title">Send To SteadFast  {{ order.order_type }} ko</h3>
+                        <h3 class="db-card-title">Send To SteadFast</h3>
                         <button type="button" @click="sendCourier('Steadfast')"
                             class="flex items-center justify-center text-white px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
                             Send
