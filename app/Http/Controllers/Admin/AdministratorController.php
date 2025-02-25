@@ -45,6 +45,7 @@ class AdministratorController extends AdminController
     public function store(AdministratorRequest $request) : AdministratorResource | \Illuminate\Http\Response | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new AdministratorResource($this->administratorService->store($request));
         } catch (\Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
@@ -54,6 +55,7 @@ class AdministratorController extends AdminController
     public function update(AdministratorRequest $request, User $administrator) : AdministratorResource | \Illuminate\Http\Response | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return new AdministratorResource($this->administratorService->update($request, $administrator));
         } catch (\Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
