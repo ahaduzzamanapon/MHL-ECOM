@@ -28,7 +28,7 @@ class EmployeeAddressRequest extends FormRequest
             'full_name'    => ['required', 'string', 'max:190'],
             'email'        => ['nullable', 'string', 'max:190'],
             'country_code' => ['required', 'string', 'max:28'],
-            'phone'        => ['required', 'string', 'max:20'],
+            'phone'        => ['required', 'string', 'max:10'],
             'country'      => ['required', 'string', 'max:100'],
             'state'        => ['nullable', 'string', 'max:100'],
             'city'         => ['nullable', 'string', 'max:100'],

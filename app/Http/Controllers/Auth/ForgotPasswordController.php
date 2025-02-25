@@ -46,7 +46,7 @@ class ForgotPasswordController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email'        => request('phone') ? ['nullable', 'string', 'email', 'max:255'] : ['required', 'string', 'email', 'max:255'],
-            'phone'        => request('email') ? ['nullable', 'string', 'max:20'] : ['required', 'string', 'max:20'],
+            'phone'        => request('email') ? ['nullable', 'string', 'max:20'] : ['required', 'string', 'max:10'],
             'country_code' => request('email') ? ['nullable', 'string', 'max:10'] : ['required', 'string', 'max:10'],
         ]);
 
@@ -183,7 +183,7 @@ class ForgotPasswordController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email'                 => request('phone') ? 'nullable|string|email|max:255' : 'required|string|email|max:255',
-            'phone'                 => request('email') ? 'nullable|string|max:20' : 'required|string|max:20',
+            'phone'                 => request('email') ? 'nullable|string|max:20' : 'required|string|max:10',
             'country_code'          => request('email') ? 'nullable|string|max:10' : 'required|string|max:10',
             'password'              => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required|string|min:6',

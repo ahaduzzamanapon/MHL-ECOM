@@ -32,7 +32,7 @@ class ProfileRequest extends FormRequest
                 'max:190',
                 Rule::unique("users", "email")->ignore(auth()->user()->id)
             ],
-            'phone'        => ['required', 'string', 'max:20', Rule::unique("users", "phone")->ignore(auth()->user()->id)],
+            'phone'        => ['required', 'string', 'max:10', Rule::unique("users", "phone")->ignore(auth()->user()->id)],
             'country_code' => ['required', 'string', 'max:20'],
             'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
