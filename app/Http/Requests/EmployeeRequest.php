@@ -49,7 +49,7 @@ class EmployeeRequest extends FormRequest
             'phone'                 => [
                 'nullable',
                 'string',
-                'max:10',
+                'max:11','min:10',
                 Rule::unique("users", "phone")->ignore($this->route('employee.id'))
             ],
             'status'                => ['required', 'numeric', 'max:24'],

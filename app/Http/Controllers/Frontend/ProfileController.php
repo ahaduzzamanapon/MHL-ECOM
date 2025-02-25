@@ -33,6 +33,7 @@ class ProfileController extends Controller
     public function update(ProfileRequest $request) : UserResource | \Illuminate\Http\Response | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return  new UserResource($this->profileService->update($request));
         } catch (\Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

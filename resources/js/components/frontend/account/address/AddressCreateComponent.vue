@@ -58,8 +58,7 @@
 
                             </div>
                             <input v-model="props.form.phone" v-on:keypress="phoneNumber($event)" v-bind:class="errors.phone
-                                ? 'invalid' : ''" type="text" id="phone" class="pl-2 text-sm w-full h-full"
-                            />
+                                ? 'invalid' : ''" type="text" id="phone" class="pl-2 text-sm w-full h-full" />
                         </div>
 
                         <small class="db-field-alert" v-if="errors.phone">
@@ -127,7 +126,7 @@
                                     $t('button.add_address')
                                 }}</button><button @click="reset()" type="button"
                                 class="font-bold text-center h-12 leading-12 px-8 rounded-full whitespace-nowrap bg-[#F7F7FC] capitalize">{{
-                                    $t('button.cancel')
+                                    $t('button.cancel') 
                                 }}</button>
                         </div>
                     </div>

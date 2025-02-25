@@ -28,7 +28,7 @@ class VerifyPhoneRequest extends FormRequest
     {
         return [
             'country_code' => ['required', 'string', 'max:20'],
-            'phone'        => ['required', 'string', 'max:10'],
+            'phone'        => ['required', 'string', 'max:11','min:10'],
             'token'        => ['required', 'max:180'],
         ];
     }

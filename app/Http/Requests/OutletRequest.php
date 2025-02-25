@@ -30,7 +30,7 @@ class OutletRequest extends FormRequest
                 Rule::unique("outlets", "name")->ignore($this->route('outlet.id'))
             ],
             'email'     => ['nullable', 'email', 'max:190'],
-            'phone'     => ['nullable', 'string', 'max:10'],
+            'phone'     => ['nullable', 'string', 'max:11','min:10'],
             'country_code'     => ['nullable', 'string', 'max:20'],
             'latitude'  => ['nullable', 'max:190'],
             'longitude' => ['nullable', 'max:190'],

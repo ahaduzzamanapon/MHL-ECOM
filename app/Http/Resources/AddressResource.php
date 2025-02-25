@@ -22,7 +22,7 @@ class AddressResource extends JsonResource
             "full_name"    => $this->full_name,
             "email"        => $this->email === null ? '' : $this->email,
             "country_code" => $this->country_code,
-            "phone"        => $this->phone,
+            "phone"        => $this->phone = ltrim($this->phone, '0'),
             "address"      => $this->address,
             "country"      => $this->country,
             "state"        => $this->state === null ? '' : $this->state,
