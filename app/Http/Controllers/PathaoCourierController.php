@@ -170,10 +170,12 @@ class PathaoCourierController extends Controller
     {
         $this->issueAccessToken();
         $accessToken = $this->access_token;
+        //dd($accessToken);
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken
         ])->get("{$this->baseUrl}/aladdin/api/v1/city-list");
+        
         return response()->json($response->json());
     }
 
