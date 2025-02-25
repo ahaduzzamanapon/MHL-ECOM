@@ -8,10 +8,35 @@ import orderStatusEnum from "../enums/modules/orderStatusEnum";
 import returnStatusEnum from "../enums/modules/returnStatusEnum";
 import VueSimpleAlert from "vue3-simple-alert";
 import currencyPositionEnum from "../enums/modules/currencyPositionEnum";
-
+import alertService from "./alertService";
 export default {
     phoneNumber: function (e) {
         let char = String.fromCharCode(e.keyCode);
+        if (!/^[0-9]$/.test(char)) {
+            alertService.error("Only numbers are allowed");
+            e.preventDefault();
+            return false;
+        }
+        let input = e.target.value + char; 
+        if (input.length === 1 && char === "0") {
+            alertService.error("The first digit cannot be 0");
+            e.preventDefault();
+            return false;
+        } 
+        if (input.length === 1 && char !== "1") {
+            alertService.error("The first digit must be 1");
+            e.preventDefault();
+            return false;
+        }
+        if (input.length === 2 && !/^[3-9]$/.test(char)) {
+            alertService.error("The second digit must be 3, 4, 5, 6, 7, 8, or 9");
+            e.preventDefault();
+            return false;
+        }
+        if (input.length > 10) { 
+            alertService.error("Number cannot be more tahn 10 digit");
+            e.preventDefault();
+        }
         if (/^[+]?[0-9]*$/.test(char)) return true;
         else e.preventDefault();
     },

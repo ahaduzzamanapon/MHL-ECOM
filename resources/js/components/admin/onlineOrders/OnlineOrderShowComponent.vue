@@ -138,7 +138,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="col-12 sm:col-6">
@@ -173,8 +172,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
-                <div v-if="isInfoAvailable()"  class="db-card p-1">
+            <div class="col-12">
+                <div v-if="showCourierInfo == true && (courier_name == 'Pathao' || courier_name == 'Steadfast' || courier_name == 'Redex')" class="db-card p-1">
+                    <!-- <div v-if="isInfoAvailable()"  class="db-card p-1"> -->
                     <h3 class="db-card-title">Couriere Info({{ courier_name }})</h3>
                     <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Steadfast'">
                         <div class="text-sm capitalize font-semibold">Consignment ID:</div>
@@ -214,7 +214,6 @@
                         <div class="text-sm capitalize font-semibold">Tracking ID:</div>
                         <div class="text-sm capitalize">{{ info.tracking_id }}</div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Pathao'">
                         <div class="text-sm capitalize font-semibold">Customer Name:</div>
                         <div class="text-sm capitalize">{{ info.recipient_name }}</div>
@@ -268,91 +267,87 @@
                         <div class="text-sm capitalize">{{ info.store_id }}</div>
 
                     </div>
-
                 </div>
-
-            <div class="db-card" v-else>
-                <!-- Tab Menu -->
-                <div class="flex border-b">
-                <button 
-                    v-for="(tab, index) in tabs" 
-                    :key="index" 
-                    @click="activeTab = tab.key"
-                    :class="['px-4 py-2', activeTab === tab.key ? 'bg-orange-500 text-white' : 'bg-gray-200']"
-                
-                >
-                    {{ tab.label }}
-                </button>
-                </div>
-
-                <!-- Tab Content -->
-                <div class="p-4 border rounded-b-lg">
-                <!-- Steadfast Tab -->
-                <div v-if="activeTab === 'steadfast'">
-                    <div class="db-card p-4">
-                    <h3 class="db-card-title">Send To SteadFast</h3>
-                    <button type="button" @click="sendCourier('Steadfast')"
-                        class="flex items-center justify-center text-white px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
-                        Send
+                <div class="db-card" v-else>
+                    <!-- Tab Menu -->
+                    <div class="flex border-b">
+                    <button 
+                        v-for="(tab, index) in tabs" 
+                        :key="index" 
+                        @click="activeTab = tab.key"
+                        :class="['px-4 py-2', activeTab === tab.key ? 'bg-orange-500 text-white' : 'bg-gray-200']"
+                    
+                    >
+                        {{ tab.label }}
                     </button>
                     </div>
-                </div>
 
-                <!-- RedX Tab -->
-                <div v-if="activeTab === 'redx'">
-                    <div class="db-card p-4">
-                    <h3 class="db-card-title">Send To RedX  {{redx_area_id}}</h3>
-                    <div class="mt-2 flex flex-col gap-3">
-                        <select  class="border px-4 py-2 rounded" v-model="redx_area_id">
-                        <option value="" selected>Select Area</option>
-                        <option v-for="area in areas" :key="area.id" :value="area.id">
-                            {{ area.name }}
-                        </option>
-                        </select>
-                        <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
-                        <button type="button" @click="sendCourier('Redex')" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
-                        Send
+                    <!-- Tab Content -->
+                    <div class="p-4 border rounded-b-lg">
+                    <!-- Steadfast Tab -->
+                    <div v-if="activeTab === 'steadfast'">
+                        <div class="db-card p-4">
+                        <h3 class="db-card-title">Send To SteadFast  {{ order.order_type }} ko</h3>
+                        <button type="button" @click="sendCourier('Steadfast')"
+                            class="flex items-center justify-center text-white px-4 h-[38px] rounded shadow-db-card bg-[#ff6912]">
+                            Send
                         </button>
+                        </div>
                     </div>
+
+                    <!-- RedX Tab -->
+                    <div v-if="activeTab === 'redx'">
+                        <div class="db-card p-4">
+                        <h3 class="db-card-title">Send To RedX </h3>
+                        <div class="mt-2 flex flex-col gap-3">
+                            <select  class="border px-4 py-2 rounded" v-model="redx_area_id">
+                            <option value="" selected>Select Area</option>
+                            <option v-for="area in areas" :key="area.id" :value="area.id">
+                                {{ area.name }}
+                            </option>
+                            </select>
+                            <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
+                            <button type="button" @click="sendCourier('Redex')" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
+                            Send
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Pathao Tab -->
+                    <div v-if="activeTab === 'pathao'">
+                        <div class="db-card p-4">
+                        <h3 class="db-card-title">Send To Pathao</h3>
+                        <div class="mt-2 flex flex-col gap-3">
+                            <select v-model="pathao_city_id" class="border px-4 py-2 rounded">
+                            <option value="" selected>Select City Name</option>
+                            <option v-for="city in cities" :key="city.id" :value="city.city_id">
+                                {{ city.city_name }}
+                            </option>
+                            </select>
+                            <select class="border px-4 py-2 rounded" v-model="pathao_zone_id">
+                            <option value="" selected>Select Zone Name</option>
+                            <option v-for="zone in zones" :key="zone.id" :value="zone.zone_id">
+                                {{ zone.zone_name }}
+                            </option>
+                            </select>
+                            <select class="border px-4 py-2 rounded" v-model="pathao_area_id">
+                            <option value="" selected>Select Area Name</option>
+                            <option v-for="pataho_area in pataho_areas" :key="pataho_area.id" :value="pataho_area.area_id">
+                                {{ pataho_area.area_name }}
+                            </option>
+                            </select>
+                            <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
+
+                            <button type="button" @click="sendPathaoCourier" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
+                            Send
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+
                     </div>
                 </div>
-
-                <!-- Pathao Tab -->
-                <div v-if="activeTab === 'pathao'">
-                    <div class="db-card p-4">
-                    <h3 class="db-card-title">Send To Pathao</h3>
-                    <div class="mt-2 flex flex-col gap-3">
-                        <select v-model="pathao_city_id" class="border px-4 py-2 rounded">
-                        <option value="" selected>Select City Name</option>
-                        <option v-for="city in cities" :key="city.id" :value="city.city_id">
-                            {{ city.city_name }}
-                        </option>
-                        </select>
-                        <select class="border px-4 py-2 rounded" v-model="pathao_zone_id">
-                        <option value="" selected>Select Zone Name</option>
-                        <option v-for="zone in zones" :key="zone.id" :value="zone.zone_id">
-                            {{ zone.zone_name }}
-                        </option>
-                        </select>
-                        <select class="border px-4 py-2 rounded" v-model="pathao_area_id">
-                        <option value="" selected>Select Area Name</option>
-                        <option v-for="pataho_area in pataho_areas" :key="pataho_area.id" :value="pataho_area.area_id">
-                            {{ pataho_area.area_name }}
-                        </option>
-                        </select>
-                        <input type="text" v-model="weight" class="border px-4 py-2 rounded" placeholder="Product Weight [Kg]">
-
-                        <button type="button" @click="sendPathaoCourier" class="bg-[#ff6912] text-white px-4 h-[38px] rounded shadow-db-card">
-                        Send
-                        </button>
-                    </div>
-                    </div>
-                </div>
-
-                </div>
-            </div>
-
-
             </div>
             <div class="col-12" v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress.length > 0"
                 v-for="address in orderAddress" :key="address">
@@ -487,6 +482,7 @@ export default {
             selectedArea :'',
             weight: '',
             info: [],
+            showCourierInfo: false,
             courier_name: '',
             pathao_city_id: '',
             pathao_zone_id: '',
@@ -561,6 +557,7 @@ export default {
         this.fetchAreass();
         this.fetchAreas();
         this.checkCourierStatus();
+
     },
     computed: {
         order: function () {
@@ -582,10 +579,12 @@ export default {
             const selectedArea = this.areas.find(area => area.id === this.redx_area_id);
             return selectedArea ? selectedArea.name : '';
         },
+
     },
     mounted() {
         this.loading.isActive = true; 
         this.checkCourierStatus();
+
         this.$store.dispatch('onlineOrder/show', this.$route.params.id).then(res => {
             this.payment_status = res.data.data.payment_status;
             this.order_status = res.data.data.status;
@@ -621,14 +620,14 @@ export default {
                 alertService.error(error.message);
             });
         },
-        isInfoAvailable() {
-            if (this.courier_name != 'Pathao') { 
-                return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
-            }
-            if (this.courier_name == 'Pathao') { 
-                return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
-            }
-        },
+        // isInfoAvailable() {
+        //     if (this.courier_name != 'Pathao') { 
+        //         return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
+        //     }
+        //     if (this.courier_name == 'Pathao') { 
+        //         return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
+        //     }
+        // },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },
@@ -760,9 +759,13 @@ export default {
             axios.post("admin/online-order/sendCourier", payload)
                 .then(response => {
                 this.loading.isActive = false;
+                   
                 response.data.status
                     ? alertService.success(response.data.message)
                     : alertService.error(response.data.message);
+                this.courier_name = courier_name;
+                this.info = response.data.data; 
+                this.showCourierInfo = true;
             })
             .catch(error => {
                 this.loading.isActive = false;
@@ -791,7 +794,7 @@ export default {
                 merchant_order_id: this.order.order_serial_no,  
                 recipient_name: this.orderAddress[0].full_name,  
                 recipient_phone: 0+''+this.orderAddress[0].phone,  
-                recipient_address: this.orderAddress[0].address,  
+                recipient_address: this.orderAddress[0].address+','+this.orderAddress[0].city+this.orderAddress[0].state+','+this.orderAddress[0].country,  
                 recipient_city: this.pathao_city_id,  
                 recipient_zone: this.pathao_zone_id, 
                 recipient_area: this.pathao_area_id,  
@@ -801,7 +804,7 @@ export default {
                 item_quantity: 1,  
                 item_weight: this.weight,  
                 item_description: "this is a Cloth item, price- 3000",  
-                amount_to_collect: this.enums.paymentStatusEnumArray[this.order.payment_status]==='Unpaid' ? this.order.total_amount_price :0,
+                amount_to_collect: this.enums.paymentStatusEnumArray[this.order.payment_status]==='Unpaid' ? parseFloat(this.order.total_amount_price,10) :0,
             };
             // console.log(payload); return false;
             this.loading.isActive = true; // Start loading
@@ -811,6 +814,7 @@ export default {
                 response.data.status
                     ? alertService.success(response.data.message)
                     : alertService.error(response.data.message);
+                    // isInfoAvailable();
                     // window.reload();
             })
             .catch(error => {
@@ -829,7 +833,7 @@ export default {
             if (newZoneId) {
                 this.fetchAreass();  // Fetch areas when zone is selected
             }
-        },
+        },        
     }
 }
 </script>
