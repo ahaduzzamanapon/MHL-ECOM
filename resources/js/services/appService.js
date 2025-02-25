@@ -8,10 +8,10 @@ import orderStatusEnum from "../enums/modules/orderStatusEnum";
 import returnStatusEnum from "../enums/modules/returnStatusEnum";
 import VueSimpleAlert from "vue3-simple-alert";
 import currencyPositionEnum from "../enums/modules/currencyPositionEnum";
-
+import alertService from "./alertService";
 export default {
     phoneNumber: function (e) {
-        let char = String.fromCharCode(e.keyCode);
+        let char = String.fromCharCode(e.keyCode);  
         if (/^[+]?[0-9]*$/.test(char)) return true;
         else e.preventDefault();
     },

@@ -49,7 +49,7 @@ class CustomerRequest extends FormRequest
             'phone'                 => [
                 'nullable',
                 'string',
-                'max:20',
+                'max:11','min:10',
                 Rule::unique("users", "phone")->ignore($this->route('customer.id'))
             ],
             'status'                => ['required', 'numeric', 'max:24'],

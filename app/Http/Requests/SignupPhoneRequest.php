@@ -27,7 +27,7 @@ class SignupPhoneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone'        => ['required', 'string', 'max:190'],
+            'phone'        => ['required', 'string', 'max:11','min:10'],
             'country_code' => ['required', 'string'],
         ];
     }

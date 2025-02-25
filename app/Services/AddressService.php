@@ -48,6 +48,7 @@ class AddressService
     public function store(AddressRequest $request)
     {
         try {
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return Address::create($request->validated() + ['user_id' => Auth::user()->id]);
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
@@ -61,6 +62,8 @@ class AddressService
     public function update(AddressRequest $request, Address $address)
     {
         try {
+            
+            $request->merge(['phone' => ltrim($request->phone, '0')]);
             return tap($address)->update($request->validated());
         } catch (Exception $exception) {
             Log::info($exception->getMessage());

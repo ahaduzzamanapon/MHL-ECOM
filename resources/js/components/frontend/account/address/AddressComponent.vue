@@ -22,12 +22,12 @@
                         </div>
                     </div>
                     <p class="text-sm leading-6">
-                        <span v-if="address.email">{{ address.email }},</span>
-                        <span v-if="address.phone">{{ address.phone }},</span>
-                        <span v-if="address.state">{{ address.state }},</span>
-                        <span v-if="address.city">{{ address.city }},</span>
+                        <span v-if="address.email">{{ address.email }}, </span>
+                        <span v-if="address.phone">{{ address.country_code + address.phone }}, </span>
+                        <span v-if="address.state">{{ address.state }}, </span>
+                        <span v-if="address.city">{{ address.city }}, </span>
                         <span v-if="address.country">{{ address.country }},</span>
-                        <span v-if="address.address">{{ address.address }}<span v-if="address.address">,</span></span>
+                        <span v-if="address.address">{{ address.address }}<span v-if="address.address">, </span></span>
                         <span v-if="address.zip_code">{{ address.zip_code }}</span>
                     </p>
                 </div>
@@ -140,7 +140,7 @@ export default {
                         full_name: address.full_name,
                         email: address.email,
                         country_code: address.country_code,
-                        phone: address.phone,
+                        phone: '0' + address.phone,
                         country: address.country,
                         state: address.state,
                         city: address.city,

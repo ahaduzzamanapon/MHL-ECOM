@@ -28,12 +28,17 @@ class AddressRequest extends FormRequest
             'full_name'    => ['required', 'string', 'max:190'],
             'email'        => ['nullable', 'string', 'max:190'],
             'country_code' => ['required', 'string', 'max:28'],
-            'phone'        => ['required', 'string', 'max:10','min:10'],
+            'phone'        => ['required', 'string', 
+                               'regex:/^01[3-9]\d{8}$/', 
+                               'not_regex:/^(\d)\1+$/', 
+                               'regex:/^01(3|4|5|6|7|8|9)\d{8}$/'
+                              ],
             'country'      => ['required', 'string', 'max:100'],
             'state'        => ['nullable', 'string', 'max:100'],
             'city'         => ['nullable', 'string', 'max:100'],
             'zip_code'     => ['nullable', 'string'],
             'address'      => ['required', 'string', 'max:500'],
         ];
+
     }
 }

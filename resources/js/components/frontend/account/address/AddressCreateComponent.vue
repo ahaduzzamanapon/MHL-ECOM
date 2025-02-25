@@ -126,7 +126,7 @@
                                     $t('button.add_address')
                                 }}</button><button @click="reset()" type="button"
                                 class="font-bold text-center h-12 leading-12 px-8 rounded-full whitespace-nowrap bg-[#F7F7FC] capitalize">{{
-                                    $t('button.cancel')
+                                    $t('button.cancel') 
                                 }}</button>
                         </div>
                     </div>
