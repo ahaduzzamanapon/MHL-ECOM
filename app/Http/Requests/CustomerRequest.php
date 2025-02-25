@@ -49,7 +49,9 @@ class CustomerRequest extends FormRequest
             'phone'                 => [
                 'nullable',
                 'string',
-                'max:11','min:10',
+                'regex:/^01[3-9]\d{8}$/', 
+                               'not_regex:/^(\d)\1+$/', 
+                               'regex:/^01(3|4|5|6|7|8|9)\d{8}$/',
                 Rule::unique("users", "phone")->ignore($this->route('customer.id'))
             ],
             'status'                => ['required', 'numeric', 'max:24'],
