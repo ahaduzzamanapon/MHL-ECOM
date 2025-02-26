@@ -42,9 +42,9 @@ class AdministratorRequest extends FormRequest
             'phone'                 => [
                 'nullable',
                 'string',
-                'regex:/^01[3-9]\d{8}$/', 
-                'not_regex:/^(\d)\1+$/', 
-                'regex:/^01(3|4|5|6|7|8|9)\d{8}$/',
+                'regex:/^0?1[3-9]\d{8}$/',
+                'not_regex:/^(\d)\1+$/',
+                'regex:/^0?1(3|4|5|6|7|8|9)\d{8}$/',
                 Rule::unique("users", "phone")->ignore($this->route('administrator.id'))
             ],
             'status'                => ['required', 'numeric', 'max:24'],

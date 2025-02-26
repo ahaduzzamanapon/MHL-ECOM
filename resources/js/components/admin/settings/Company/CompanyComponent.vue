@@ -214,7 +214,7 @@ export default {
                             company_name: res.data.data.company_name,
                             company_email: res.data.data.company_email,
                             company_calling_code: res.data.data.company_calling_code,
-                            company_phone: res.data.data.company_phone,
+                            company_phone: '0'+ res.data.data.company_phone,
                             company_website: res.data.data.company_website,
                             company_city: res.data.data.company_city,
                             company_state: res.data.data.company_state,

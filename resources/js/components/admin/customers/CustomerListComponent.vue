@@ -268,7 +268,7 @@ export default {
                     this.props.form = {
                         name: customer.name,
                         email: customer.email,
-                        phone: customer.phone,
+                        phone: '0'+ customer.phone,
                         password: customer.password,
                         status: customer.status,
                         country_code: customer.country_code,

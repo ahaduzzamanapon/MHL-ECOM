@@ -32,9 +32,9 @@ class ProfileRequest extends FormRequest
                 'max:190',
                 Rule::unique("users", "email")->ignore(auth()->user()->id)
             ],
-            'phone'        => ['required', 'string',  'regex:/^01[3-9]\d{8}$/', 
-                               'not_regex:/^(\d)\1+$/', 
-                               'regex:/^01(3|4|5|6|7|8|9)\d{8}$/', Rule::unique("users", "phone")->ignore(auth()->user()->id)],
+            'phone'        => ['required', 'string',  'regex:/^0?1[3-9]\d{8}$/',
+                               'not_regex:/^(\d)\1+$/',
+                               'regex:/^0?1(3|4|5|6|7|8|9)\d{8}$/', Rule::unique("users", "phone")->ignore(auth()->user()->id)],
             'country_code' => ['required', 'string', 'max:20'],
             'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];

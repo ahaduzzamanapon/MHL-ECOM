@@ -111,7 +111,7 @@ export default {
             this.form = {
                 name: profile.name,
                 email: profile.email,
-                phone: profile.phone,
+                phone: '0'+ profile.phone,
                 country_code: profile.country_code,
             };
 

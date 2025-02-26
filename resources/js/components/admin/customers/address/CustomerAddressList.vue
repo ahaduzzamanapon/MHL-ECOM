@@ -206,7 +206,7 @@ export default {
             full_name: address.full_name,
             email: address.email,
             country_code: address.country_code,
-            phone: address.phone,
+            phone: '0'+ address.phone,
             country: address.country,
             state: address.state,
             city: address.city,

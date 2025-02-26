@@ -169,7 +169,7 @@ export default {
                 name: outlet.name,
                 email: outlet.email,
                 country_code: outlet.country_code,
-                phone: outlet.phone,
+                phone: '0'+ outlet.phone,
                 latitude: outlet.latitude,
                 longitude: outlet.longitude,
                 city: outlet.city,
