@@ -173,8 +173,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <div v-if="showCourierInfo == true && (courier_name == 'Pathao' || courier_name == 'Steadfast' || courier_name == 'Redex')" class="db-card p-1">
-                    <!-- <div v-if="isInfoAvailable()"  class="db-card p-1"> -->
+                <div v-if="isInfoAvailable"  class="db-card p-1">
                     <h3 class="db-card-title">Couriere Info({{ courier_name }})</h3>
                     <div class="grid grid-cols-2 gap-3 p-3" v-if="courier_name == 'Steadfast'">
                         <div class="text-sm capitalize font-semibold">Consignment ID:</div>
@@ -449,7 +448,6 @@ import axios from "axios";
 import { debounce } from 'lodash';
 import { info } from "autoprefixer";
 
-
 export default {
     name: "OnlineOrderShowComponent",
     components: {
@@ -482,7 +480,6 @@ export default {
             selectedArea :'',
             weight: '',
             info: [],
-            showCourierInfo: false,
             courier_name: '',
             pathao_city_id: '',
             pathao_zone_id: '',
@@ -557,7 +554,6 @@ export default {
         this.fetchAreass();
         this.fetchAreas();
         this.checkCourierStatus();
-
     },
     computed: {
         order: function () {
@@ -579,12 +575,13 @@ export default {
             const selectedArea = this.areas.find(area => area.id === this.redx_area_id);
             return selectedArea ? selectedArea.name : '';
         },
-
+        isInfoAvailable() {
+            return this.checkInfoAvailability();
+        },
     },
     mounted() {
         this.loading.isActive = true;
         this.checkCourierStatus();
-
         this.$store.dispatch('onlineOrder/show', this.$route.params.id).then(res => {
             this.payment_status = res.data.data.payment_status;
             this.order_status = res.data.data.status;
@@ -620,14 +617,14 @@ export default {
                 alertService.error(error.message);
             });
         },
-        // isInfoAvailable() {
-        //     if (this.courier_name != 'Pathao') {
-        //         return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
-        //     }
-        //     if (this.courier_name == 'Pathao') {
-        //         return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
-        //     }
-        // },
+        checkInfoAvailability() {
+            if (this.courier_name != 'Pathao') {
+                return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
+            }
+            if (this.courier_name == 'Pathao') {
+                return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
+            }
+        },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },
@@ -758,14 +755,9 @@ export default {
             this.loading.isActive = true; // Start loading
             axios.post("admin/online-order/sendCourier", payload)
                 .then(response => {
-                this.loading.isActive = false;
-
-                response.data.status
-                    ? alertService.success(response.data.message)
-                    : alertService.error(response.data.message);
-                this.courier_name = courier_name;
-                this.info = response.data.data;
-                this.showCourierInfo = true;
+                    this.loading.isActive = false;
+                    response.data.status ? alertService.success(response.data.message): '';
+                    window.location.reload();
             })
             .catch(error => {
                 this.loading.isActive = false;
@@ -814,8 +806,7 @@ export default {
                 response.data.status
                     ? alertService.success(response.data.message)
                     : alertService.error(response.data.message);
-                    // isInfoAvailable();
-                    // window.reload();
+                    window.location.reload();
             })
             .catch(error => {
                 this.loading.isActive = false;
