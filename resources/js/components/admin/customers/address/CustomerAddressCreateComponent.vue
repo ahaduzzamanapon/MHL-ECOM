@@ -219,7 +219,7 @@ export default {
             this.$store.dispatch('state/statesByCountry', countryName)
                 .then((res) => {
                     this.props.states = res.data.data;
-                })
+            })
         },
         callCities: function (stateName) {
             this.props.form.city = null;

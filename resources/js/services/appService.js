@@ -11,7 +11,7 @@ import currencyPositionEnum from "../enums/modules/currencyPositionEnum";
 import alertService from "./alertService";
 export default {
     phoneNumber: function (e) {
-        let char = String.fromCharCode(e.keyCode);  
+        let char = String.fromCharCode(e.keyCode);
         if (/^[+]?[0-9]*$/.test(char)) return true;
         else e.preventDefault();
     },

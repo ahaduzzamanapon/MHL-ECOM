@@ -23,7 +23,7 @@ class ProfileService
             $user               = User::find(auth()->user()->id);
             if (!blank($user)) {
                 $user->name         = $request->name;
-                $user->phone        = $request->get('phone');
+                $user->phone        =  ltrim($request->get('phone'), '0');
                 $user->email        = $request->get('email');
                 $user->country_code = $request->get('country_code');
                 $user->save();

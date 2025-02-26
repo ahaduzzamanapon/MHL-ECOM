@@ -72,7 +72,7 @@
                                 </li>
                                 <li class="flex gap-3">
                                     <i class="lab-fill-calling text-sm flex-shrink-0 text-white"></i>
-                                    <span class="text-sm font-medium text-white">{{ setting.company_phone }}</span>
+                                    <span class="text-sm font-medium text-white">0{{ setting.company_phone }}</span>
                                 </li>
                             </ul>
 

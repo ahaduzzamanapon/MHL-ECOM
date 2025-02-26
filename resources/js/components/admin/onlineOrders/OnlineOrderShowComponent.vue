@@ -271,12 +271,12 @@
                 <div class="db-card" v-else>
                     <!-- Tab Menu -->
                     <div class="flex border-b">
-                    <button 
-                        v-for="(tab, index) in tabs" 
-                        :key="index" 
+                    <button
+                        v-for="(tab, index) in tabs"
+                        :key="index"
                         @click="activeTab = tab.key"
                         :class="['px-4 py-2', activeTab === tab.key ? 'bg-orange-500 text-white' : 'bg-gray-200']"
-                    
+
                     >
                         {{ tab.label }}
                     </button>
@@ -447,7 +447,7 @@ import OnlineOrderReasonComponent from "./OnlineOrderReasonComponent";
 import OnlineOrderReceiptComponent from "./OnlineOrderReceiptComponent";
 import axios from "axios";
 import { debounce } from 'lodash';
-import { info } from "autoprefixer";    
+import { info } from "autoprefixer";
 
 
 export default {
@@ -473,7 +473,7 @@ export default {
             cities: [],
             city_name: '',
             zones: [],
-            zone_name: '', 
+            zone_name: '',
             pathao_areas: [],
             pathao_area_name: '',
             areas: [],
@@ -582,7 +582,7 @@ export default {
 
     },
     mounted() {
-        this.loading.isActive = true; 
+        this.loading.isActive = true;
         this.checkCourierStatus();
 
         this.$store.dispatch('onlineOrder/show', this.$route.params.id).then(res => {
@@ -621,10 +621,10 @@ export default {
             });
         },
         // isInfoAvailable() {
-        //     if (this.courier_name != 'Pathao') { 
+        //     if (this.courier_name != 'Pathao') {
         //         return this.info.invoice !== null && this.info.invoice !== undefined && this.info.invoice !== "";
         //     }
-        //     if (this.courier_name == 'Pathao') { 
+        //     if (this.courier_name == 'Pathao') {
         //         return this.info.merchant_order_id !== null && this.info.merchant_order_id !== undefined && this.info.merchant_order_id !== "";
         //     }
         // },
@@ -759,12 +759,12 @@ export default {
             axios.post("admin/online-order/sendCourier", payload)
                 .then(response => {
                 this.loading.isActive = false;
-                   
+
                 response.data.status
                     ? alertService.success(response.data.message)
                     : alertService.error(response.data.message);
                 this.courier_name = courier_name;
-                this.info = response.data.data; 
+                this.info = response.data.data;
                 this.showCourierInfo = true;
             })
             .catch(error => {
@@ -774,36 +774,36 @@ export default {
         },
         sendPathaoCourier() {
             // console.log(this.order); return false;
-            if (this.pathao_city_id == '') { 
-                alertService.error('City Required');  
+            if (this.pathao_city_id == '') {
+                alertService.error('City Required');
                 return false;
             }
-            if (this.pathao_zone_id == '') { 
+            if (this.pathao_zone_id == '') {
                   alertService.error('Zone Required');
                   return false;
             }
-            if (this.pathao_area_id == '') { 
+            if (this.pathao_area_id == '') {
                 alertService.error('Area Required');
                 return false;
             }
 
-            // order.total_currency_price 
+            // order.total_currency_price
             this.loading.isActive = true;
             let payload = {
-                store_id: '148064',  
-                merchant_order_id: this.order.order_serial_no,  
-                recipient_name: this.orderAddress[0].full_name,  
-                recipient_phone: 0+''+this.orderAddress[0].phone,  
-                recipient_address: this.orderAddress[0].address+','+this.orderAddress[0].city+this.orderAddress[0].state+','+this.orderAddress[0].country,  
-                recipient_city: this.pathao_city_id,  
-                recipient_zone: this.pathao_zone_id, 
-                recipient_area: this.pathao_area_id,  
-                delivery_type: 48, 
+                store_id: '148064',
+                merchant_order_id: this.order.order_serial_no,
+                recipient_name: this.orderAddress[0].full_name,
+                recipient_phone: '0'+this.orderAddress[0].phone,
+                recipient_address: this.orderAddress[0].address+','+this.orderAddress[0].city+this.orderAddress[0].state+','+this.orderAddress[0].country,
+                recipient_city: this.pathao_city_id,
+                recipient_zone: this.pathao_zone_id,
+                recipient_area: this.pathao_area_id,
+                delivery_type: 48,
                 item_type: 2,
-                special_instruction: "Need to Delivery before 5 PM",  
-                item_quantity: 1,  
-                item_weight: this.weight,  
-                item_description: "this is a Cloth item, price- 3000",  
+                special_instruction: "Need to Delivery before 5 PM",
+                item_quantity: 1,
+                item_weight: this.weight,
+                item_description: "this is a Cloth item, price- 3000",
                 amount_to_collect: this.enums.paymentStatusEnumArray[this.order.payment_status]==='Unpaid' ? parseFloat(this.order.total_amount_price,10) :0,
             };
             // console.log(payload); return false;
@@ -833,7 +833,7 @@ export default {
             if (newZoneId) {
                 this.fetchAreass();  // Fetch areas when zone is selected
             }
-        },        
+        },
     }
 }
 </script>
