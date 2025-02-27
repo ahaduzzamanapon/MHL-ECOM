@@ -25,9 +25,7 @@ class CountryCodeController extends Controller
         }
     }
 
-    public function show(
-        $country
-    ): \Illuminate\Http\Response | CountryCodeResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
+    public function show($country): \Illuminate\Http\Response | CountryCodeResource | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
         try {
             return new CountryCodeResource($this->countryCodeService->show($country));
         } catch (Exception $exception) {

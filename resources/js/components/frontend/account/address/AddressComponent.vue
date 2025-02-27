@@ -24,11 +24,10 @@
                     <p class="text-sm leading-6">
                         <span v-if="address.email">{{ address.email }}, </span>
                         <span v-if="address.phone">{{ address.country_code + address.phone }}, </span>
+                        <span v-if="address.address">{{ address.address }}, </span>
                         <span v-if="address.state">{{ address.state }}, </span>
-                        <span v-if="address.city">{{ address.city }}, </span>
-                        <span v-if="address.country">{{ address.country }},</span>
-                        <span v-if="address.address">{{ address.address }}<span v-if="address.address">, </span></span>
-                        <span v-if="address.zip_code">{{ address.zip_code }}</span>
+                        <span v-if="address.city">{{ address.city }}-<span v-if="address.zip_code">{{ address.zip_code }}</span>, </span>
+                        <span v-if="address.country">{{ address.country }}.</span>
                     </p>
                 </div>
             </div>

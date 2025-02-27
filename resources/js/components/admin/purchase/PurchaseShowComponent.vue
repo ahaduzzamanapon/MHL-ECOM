@@ -19,7 +19,7 @@
                         </li>
                         <li v-if="purchaseDetails.supplier?.phone" class="flex items-start gap-1">
                             <span class="text-sm capitalize">{{ $t('label.phone') }}:</span>
-                            <span class="text-sm">{{ purchaseDetails.supplier?.phone }}</span>
+                            <span class="text-sm">0{{ purchaseDetails.supplier?.phone }}</span>
                         </li>
                         <li v-if="purchaseDetails.supplier?.email" class="flex items-start gap-1">
                             <span class="text-sm capitalize">{{ $t('label.email') }}:</span>

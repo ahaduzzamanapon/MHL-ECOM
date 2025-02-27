@@ -21,7 +21,8 @@ class CountryStateCityService
     public function countries()
     {
         try {
-            return Country::where('status', Status::ACTIVE)->orderBy('name', 'asc')->get();
+            // Status::ACTIVE
+            return Country::where('status', 5)->orderBy('name', 'asc')->get();
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
