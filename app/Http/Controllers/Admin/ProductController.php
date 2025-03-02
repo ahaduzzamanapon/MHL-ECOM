@@ -63,10 +63,10 @@ class ProductController extends AdminController
             if (env('DEMO')) {
                 return new ProductAdminResource($this->productService->store($request));
             } else {
-                if ($this->apiRequest->status) {
+                // if ($this->apiRequest->status) {
                     return new ProductAdminResource($this->productService->store($request));
-                }
-                return response(['status' => false, 'message' => $this->apiRequest->message], 422);
+                // }
+                // return response(['status' => false, 'message' => $this->apiRequest->message], 422);
             }
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

@@ -26,7 +26,6 @@ class InstallerController extends Controller
         $this->installerService                    = $installerService;
         $this->installerRequirementsCheckerService = $installerRequirementsCheckerService;
         $this->installerPermissionCheckerService   = $installerPermissionCheckerService;
-
         if (file_exists(storage_path('installed'))) {
             Redirect::to(env('APP_URL'))->send();
         }

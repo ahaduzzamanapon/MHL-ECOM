@@ -270,7 +270,19 @@ Route::prefix('profile')->name('profile.')->middleware(['installed', 'auth:sanct
     Route::post('/change-image', [ProfileController::class, 'changeImage']);
 });
 
+Route::prefix('admin')->name('admin.')->group(function () {
+
+    Route::prefix('country-code')->name('country-code.')->group(function () {
+        Route::get('/', [CountryCodeController::class, 'index']);
+        Route::get('/show/{country}', [CountryCodeController::class, 'show']);
+        Route::get('/calling-code/{callingCode}', [CountryCodeController::class, 'callingCode']);
+    });
+});
+
 Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(function () {
+
+
+
     Route::prefix('timezone')->name('timezone.')->group(function () {
         Route::get('/', [TimezoneController::class, 'index']);
     });
@@ -582,11 +594,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(func
         });
     });
 
-    Route::prefix('country-code')->name('country-code.')->group(function () {
-        Route::get('/', [CountryCodeController::class, 'index']);
-        Route::get('/show/{country}', [CountryCodeController::class, 'show']);
-        Route::get('/calling-code/{callingCode}', [CountryCodeController::class, 'callingCode']);
-    });
+   
 
     Route::prefix('country')->name('country')->group(function () {
         Route::get('/', [CountryController::class, 'index']);

@@ -40,12 +40,13 @@ class SiteController extends AdminController
             if (env('DEMO')) {
                 return new SiteResource($this->siteService->update($request));
             } else {
-                if ($this->apiRequest->status) {
+                // if ($this->apiRequest->status) {
                     return new SiteResource($this->siteService->update($request));
-                }
-                return response(['status' => false, 'message' => $this->apiRequest->message], 422);
+                // }
+                // return response(['status' => false, 'message' => $this->apiRequest->message], 422);
             }
         } catch (Exception $exception) {
+            dd($exception);
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
