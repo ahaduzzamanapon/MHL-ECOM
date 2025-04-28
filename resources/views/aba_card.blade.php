@@ -90,7 +90,7 @@ class PayWayApiCheckout {
         $email = $order->email;
         $req_time = time();
         $merchant_id = 'adoralifestyle';
-        $payment_option='abapay'; 
+        $payment_option='cards'; 
         $return_url =$array['cancel_url']; 
         $cancel_url = $array['cancel_url'];
         $continue_success_url = $array['success_url'];
