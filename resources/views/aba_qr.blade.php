@@ -33,11 +33,11 @@
             height: 40px;
         }
         .amount-box {
-            background: #d9534f;
-            color: #ffffff;
+            color: #000000;
             padding: 10px 20px;
             font-size: 18px;
             font-weight: bold;
+            text-align: center;
         }
         .amount-display {
             font-size: 32px;
@@ -52,18 +52,17 @@
         .qr-section {
             margin: 20px 0;
         }
-        .qr-section img {
-            width: 160px;
-            height: 160px;
-            border: 8px solid #f2f5f9;
-            border-radius: 12px;
-            background: #fff;
+       .qr-section img {
+            width: 60%;
         }
         .scan-text {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #555;
-        }
+    margin-top: 15px;
+    font-size: 9px;
+    color: #9d9d9d;
+    width: 60%;
+    place-self: anchor-center;
+    font-weight: 100;
+}
         .or-text {
             font-size: 14px;
             color: #aaa;
@@ -99,20 +98,12 @@
 <body>
 <div class="payment-card">
 
-    <div class="logo">
-        <img src="https://rsadora.com/storage/644/WhatsApp-Image-2025-03-20-at-12.34.59-PM-(1).jpeg" alt="Shopping Store"> <!-- Replace with your logo path -->
-    </div>
 
     <div class="amount-box">
         ABA Payment
     </div>
 
-    <div class="amount-display">
-        {{ number_format($order->total ?? 0.00, 2) }}
-    </div>
-    <div class="currency">
-        {{ $responseData['currency'] ?? 'USD' }}
-    </div>
+    
 
     <div class="qr-section">
         @if(isset($responseData['qrImage']))
@@ -123,28 +114,15 @@
     </div>
 
     <div class="scan-text">
-        Scan to Pay
+        Scan with Bakong App or Mobile Banking app that support KHOR 
     </div>
 
-    <div class="or-text">
-        OR
-    </div>
 
     @if(isset($responseData['qrImage']))
         <a href="{{ $responseData['qrImage'] }}" download="qr-code.png" class="download-link">
             Download QR
         </a>
     @endif
-
-    <div class="footer-info">
-        and upload to Mobile Banking app supporting ABA QR
-    </div>
-
-    <div class="total-amount">
-        <div style="display: flex;justify-content: space-between;border-bottom: 2px dotted;margin: 5px 0px;padding: 6px 0px;font-weight: 100;font-size: small;">Subtotal<small>{{ number_format($order->total ?? 0.00, 2) }} {{ $responseData['currency'] ?? 'USD' }}</small></div>
-        <div style="display: flex;justify-content: space-between">TOTAL<small>{{ number_format($order->total ?? 0.00, 2) }} {{ $responseData['currency'] ?? 'USD' }}</small></div>
-    </div>
-  
 
 </div>
 
