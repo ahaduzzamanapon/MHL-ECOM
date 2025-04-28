@@ -58,9 +58,6 @@ class PayWayApiCheckout {
 
 
 
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,21 +78,22 @@ class PayWayApiCheckout {
     <!— Modal content —>
     <div class="aba-modal-content">
 
+
         <!-- Include PHP class -->
         <?php
 
         $transactionId = time();
-        $amount = '0.01';
-        $firstName = 'Kriya';
-        $lastName = 'Bour';
-        $phone = '+855978719172';
-        $email = 'kriya.bour@ababank.com';
+        $amount = $order->total;
+        $firstName = $order->first_name;
+        $lastName = $order->last_name;
+        $phone = $order->phone;
+        $email = $order->email;
         $req_time = time();
         $merchant_id = 'adoralifestyle';
         $payment_option='cards'; 
-        $return_url ='https://www.ababank.com'; 
-        $cancel_url ='https://www.ababank.com';
-        $continue_success_url ='https://www.ababank.com';
+        $return_url =$array['cancel_url']; 
+        $cancel_url = $array['cancel_url'];
+        $continue_success_url = $array['success_url'];
         $currency = 'usd';
 
 
@@ -125,7 +123,7 @@ class PayWayApiCheckout {
 
 <!— Page Content —>
 <div class="container" style="margin-top: 75px;margin: 0 auto;">
-    <div style="width: 200px;margin: 0 auto;">
+    <div style="width: 200px;margin: 0 auto;display: none;">
         <div class="wpr_payment_option">
             <div style="margin-top: 10px">
                 <input type="radio" name="payment_option" class="payment_option" style="margin: 14px;float: left;" checked value="<?= $payment_option?>">
@@ -149,6 +147,9 @@ class PayWayApiCheckout {
 
 <script>
     $(document).ready(function(){
+        setTimeout(() => {
+            $('#checkout_button').click()
+        }, 1000);
         $('#checkout_button').click(function(){
             // $('#aba_merchant_request').append($(".payment_option:checked"));
             AbaPayway.checkout();
@@ -158,3 +159,4 @@ class PayWayApiCheckout {
 <!— End —>
 </body>
 </html>
+
