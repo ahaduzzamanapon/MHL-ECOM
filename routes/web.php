@@ -5,6 +5,8 @@ use App\Http\Controllers\Frontend\RootController;
 use App\Http\Controllers\Installer\InstallerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\PaymentGateways\Gateways\Aba;
+
 
 
 /*
@@ -40,8 +42,12 @@ Route::prefix('payment')->name('payment.')->middleware(['installed'])->group(fun
     Route::match(['get', 'post'], '/{paymentGateway:slug}/{order}/fail', [PaymentController::class, 'fail'])->name('fail');
     Route::match(['get', 'post'], '/{paymentGateway:slug}/{order}/cancel', [PaymentController::class, 'cancel'])->name('cancel');
     Route::get('/successful/{order}', [PaymentController::class, 'successful'])->name('successful');
+    Route::get('/somoy', [PaymentController::class, 'somoy_webhook'])->name('somoy');
 });
 
+
+
+Route::post('/payment/aba/webhook', [Aba::class, 'webhook'])->name('aba.webhook');
 
 
 Route::get('/artisan/{any}', function ($any) {

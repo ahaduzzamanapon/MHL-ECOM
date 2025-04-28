@@ -123,6 +123,7 @@ class Sslcommerz extends PaymentAbstract
 
     public function success($order, $request): \Illuminate\Http\RedirectResponse
     {
+        
         try {
             if (isset($request['bank_tran_id'])) {
                 $paymentService = new PaymentService;

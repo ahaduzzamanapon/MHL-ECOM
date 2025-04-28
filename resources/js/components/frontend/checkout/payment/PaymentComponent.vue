@@ -7,28 +7,44 @@
                     {{ $t('label.select_payment_method') }}
                 </h4>
 
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-4">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-4" style="display: flex;flex-direction: column;">
                     <div v-if="Object.keys(cashOnDelivery).length > 0 && setting.site_cash_on_delivery === ActivityEnum.ENABLE"
                         @click.prevent="selectPaymentMethod(cashOnDelivery)"
                         :class="Object.keys(paymentMethod).length > 0 && cashOnDelivery.id === paymentMethod.id ? 'border-primary/50 bg-[#FFF4F1]' : 'border-white bg-white'"
-                        class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border">
-                        <img class="h-6" :src="cashOnDelivery.image" alt="payment" />
-                        <span class="text-xs font-medium">{{ cashOnDelivery.name }}</span>
+                        class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border" style="display: flex;flex-direction: row;padding: 7px;width: 304px;justify-content: flex-start;">
+                        <img class="h-6" :src="cashOnDelivery.image" alt="payment" style="height: 54px;width: 66px;" />
+                        <div style="display: flex;flex-direction: column;">
+                            <span class="text-xm font-medium">{{ cashOnDelivery.name }}</span>
+                            <span class="text-xs font-thin">Pay with {{ cashOnDelivery.name }}</span>
+                        </div>
                     </div>
-
-                    <div v-if="profile.balance >= total" @click.prevent="selectPaymentMethod(credit)"
+                    <!-- <div v-if="profile.balance >= total" @click.prevent="selectPaymentMethod(credit)"
                         :class="Object.keys(paymentMethod).length > 0 && credit.id === paymentMethod.id ? 'border-primary/50 bg-[#FFF4F1]' : 'border-white bg-white'"
                         class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border">
                         <img class="h-6" :src="credit.image" alt="payment" />
                         <span class="text-xs font-medium">{{ credit.name }} ({{ profile.balance }})</span>
-                    </div>
-
+                    </div> -->
                     <div v-if="setting.site_online_payment_gateway === ActivityEnum.ENABLE"
                         v-for="paymentGateway in paymentGateways" @click.prevent="selectPaymentMethod(paymentGateway)"
                         :class="Object.keys(paymentMethod).length > 0 && paymentGateway.id === paymentMethod.id ? 'border-primary/50 bg-[#FFF4F1]' : 'border-white bg-white'"
-                        class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border">
-                        <img class="h-6" :src="paymentGateway.image" alt="payment"  />
-                        <span class="text-xs font-medium">{{ paymentGateway.name }}</span>
+                        class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border" style="display: flex;flex-direction: row;padding: 7px;width: 304px;justify-content: flex-start;">
+                        <img class="h-6" :src="paymentGateway.image" alt="payment" style="height: 54px;width: 66px;"  />
+                        <div style="display: flex;flex-direction: column;">
+                            <span class="text-xm font-medium">{{ paymentGateway.name }}</span>
+                            <span class="text-xs font-thin" v-if="paymentGateway.name === 'Credit/Debit Card'">
+                                <img src="https://rsadora.com/storage/payment_getway/cards.png" class="h-4 inline-block" />
+                            </span>
+                            <span class="text-xs font-thin" v-else >
+                                {{ 
+                                    paymentGateway.name === "ABA KHQR" ? 
+                                        "Scan to pay with any banking app" 
+                                    : paymentGateway.name === "Credit/Debit Card" ? 
+                                        "Pay with <img src='/storage/payment_getway/cards.png' class='h-4 inline-block' />"
+                                    : "Pay with " + paymentGateway.name 
+                                }}
+                            </span>
+                           
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,6 +166,8 @@ export default {
 
                     } else {
                         this.paymentGateways.push(gateway);
+                        console.log(this.paymentGateways);
+                        
                     }
                 });
             }

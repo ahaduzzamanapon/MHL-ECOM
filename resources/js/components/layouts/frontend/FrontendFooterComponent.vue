@@ -72,7 +72,7 @@
                                 </li>
                                 <li class="flex gap-3">
                                     <i class="lab-fill-calling text-sm flex-shrink-0 text-white"></i>
-                                    <span class="text-sm font-medium text-white">0{{ setting.company_phone }}</span>
+                                    <span class="text-sm font-medium text-white">{{ setting.company_phone }}</span>
                                 </li>
                             </ul>
 
@@ -89,13 +89,22 @@
                                     </a>
                                 </dd>
                             </dl>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="pt-4 pb-24 lg:py-4 mt-8 text-center border-t border-white/5">
-            <p class="text-xs font-medium text-white">{{ setting.site_copyright }}</p>
+            <div style="display: flex;justify-content: space-between;">
+                <p class="text-xs font-medium text-white">{{ setting.site_copyright }}</p>
+                <div style="display:flex;gap:10px;align-items: center;">
+                    <h2 class=" text-white">We Accept:</h2>
+                    <div style="display: flex;gap: 10px;">
+                        <img style="height: 23px;" src="https://rsadora.com/storage/payment_getway/weaccept.png" alt="app">
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 </template>

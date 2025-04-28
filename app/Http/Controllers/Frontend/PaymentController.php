@@ -69,6 +69,7 @@ class PaymentController extends Controller
 
     public function payment(Order $order, PaymentRequest $request)
     {
+
         if ($this->paymentManagerService->gateway($request->paymentMethod)->status()) {
             $className = 'App\\Http\\PaymentGateways\\PaymentRequests\\' . ucfirst($request->paymentMethod);
             $gateway   = new $className;
@@ -112,4 +113,11 @@ class PaymentController extends Controller
 
         return redirect('/account/order-details/' . $order->id . '?status=success');
     }
+
+    public function somoy_webhook(Request $request){
+    dd($request->all());
+    }
+
+
+
 }
