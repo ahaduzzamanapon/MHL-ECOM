@@ -1,130 +1,160 @@
-<!-- resources/views/aba_qr.blade.php -->
+
+<?php
+/*
+|--------------------------------------------------------------------------
+| ABA PayWay API URL
+|--------------------------------------------------------------------------
+| API URL that is provided by PayWay must be required in your post form
+|
+*/
+define('ABA_PAYWAY_API_URL', 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase');
+
+/*
+|--------------------------------------------------------------------------
+| ABA PayWay API KEY
+|--------------------------------------------------------------------------
+| API KEY that is generated and provided by PayWay must be required in your post form
+|
+*/
+define('ABA_PAYWAY_API_KEY', 'bc1d4e36-ca0c-4da3-930d-da5d67500e80');
+
+/*
+|--------------------------------------------------------------------------
+| ABA PayWay Merchant ID
+|--------------------------------------------------------------------------
+| Merchant ID that is generated and provided by PayWay must be required in your post form
+|
+*/
+define('ABA_PAYWAY_MERCHANT_ID', 'adoralifestyle');
+
+
+class PayWayApiCheckout {
+
+    /**
+     * Returns the getHash
+     * For PayWay security, you must follow the way of encryption for hash.
+     *
+     * @param string $transactionId
+     * @param string $amount
+     *
+     * @return string getHash
+     */
+    public static function getHash($hash_str) {
+//      echo $hash_str; die;
+        $hash = base64_encode(hash_hmac('sha512', $hash_str, ABA_PAYWAY_API_KEY, true));
+        return $hash;
+    }
+
+    /**
+     * Returns the getApiUrl
+     *
+     * @return string getApiUrl
+     */
+    public static function getApiUrl() {
+        return ABA_PAYWAY_API_URL;
+    }
+}
+?>
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>ABA QR Payment</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PayWay Checkout Sample</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #f2f5f9;
-            font-family: 'Poppins', 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .payment-card {
-            background: #ffffff;
-            border-radius: 16px;
-            width: 347px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            padding-bottom: 20px;
-            text-align: center;
-        }
-        .logo {
-            padding: 20px;
-        }
-        .logo img {
-            height: 40px;
-        }
-        .amount-box {
-            color: #000000;
-            padding: 10px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .amount-display {
-            font-size: 32px;
-            margin: 15px 0;
-            color: #333;
-        }
-        .currency {
-            font-size: 14px;
-            color: #888;
-            margin-top: -10px;
-        }
-        .qr-section {
-            margin: 20px 0;
-        }
-       .qr-section img {
-            width: 60%;
-        }
-        .scan-text {
-    margin-top: 15px;
-    font-size: 9px;
-    color: #9d9d9d;
-    width: 60%;
-    place-self: anchor-center;
-    font-weight: 100;
-}
-        .or-text {
-            font-size: 14px;
-            color: #aaa;
-            margin: 10px 0;
-        }
-        .download-link {
-            display: inline-block;
-            margin-top: 10px;
-            background: #00b2ff;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .download-link:hover {
-            background: #0090cc;
-        }
-        .footer-info {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #888;
-        }
-        .total-amount {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    margin: 20px 12px;
-}
-    </style>
+    <!— Make a copy of this code to paste into your site—>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="author" content="PayWay">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!— end —>
 </head>
+
 <body>
-<div class="payment-card">
+<!— Popup Checkout Form —>
+<div id="aba_main_modal" class="aba-modal">
+    <!— Modal content —>
+    <div class="aba-modal-content">
+
+        <!-- Include PHP class -->
+        <?php
+
+        $transactionId = time();
+        $amount = '0.01';
+        $firstName = 'Kriya';
+        $lastName = 'Bour';
+        $phone = '+855978719172';
+        $email = 'kriya.bour@ababank.com';
+        $req_time = time();
+        $merchant_id = 'adoralifestyle';
+        $payment_option='cards'; 
+        $return_url ='https://www.ababank.com'; 
+        $cancel_url ='https://www.ababank.com';
+        $continue_success_url ='https://www.ababank.com';
+        $currency = 'usd';
 
 
-    <div class="amount-box">
-        ABA Payment
+        $hashdata=PayWayApiCheckout::getHash($req_time . $merchant_id . $transactionId . $amount.$firstName.$lastName.$email.$phone .$payment_option. $return_url . $cancel_url . $continue_success_url.$currency)
+        ?>
+
+        <form method="POST" target="aba_webservice" action="<?php echo PayWayApiCheckout::getApiUrl(); ?>" id="aba_merchant_request">
+            <input type="hidden" name="hash" value="<?php echo $hashdata ; ?>" id="hash"/>
+            <input type="hidden" name="tran_id" value="<?php echo $transactionId; ?>" id="tran_id"/>
+            <input type="hidden" name="amount" value="<?php echo $amount; ?>" id="amount"/>
+            <input type="hidden" name="firstname" value="<?php echo $firstName; ?>"/>
+            <input type="hidden" name="lastname" value="<?php echo $lastName; ?>"/>
+            <input type="hidden" name="phone" value="<?php echo $phone; ?>"/>
+            <input type="hidden" name="email" value="<?php echo $email; ?>"/>
+            <input type="hidden" name="req_time" value="<?php echo $req_time; ?>"/>
+            <input type="hidden" name="merchant_id" value="<?php echo $merchant_id; ?>"/>
+            <input type="hidden" name="payment_option" value="<?php echo $payment_option; ?>"/>
+            <input type="hidden" name="return_url" value="<?php echo $return_url; ?>"/>
+            <input type="hidden" name="cancel_url" value="<?php echo $cancel_url; ?>"/>
+            <input type="hidden" name="continue_success_url" value="<?php echo $continue_success_url; ?>"/>
+            <input type="hidden" name="currency" value="<?php echo $currency; ?>"/>
+        </form>
     </div>
-
-    
-
-    <div class="qr-section">
-        @if(isset($responseData['qrImage']))
-            <img src="{{ $responseData['qrImage'] }}" alt="Scan QR Code">
-        @else
-            <p>QR code not available</p>
-        @endif
-    </div>
-
-    <div class="scan-text">
-        Scan with Bakong App or Mobile Banking app that support KHOR 
-    </div>
-
-
-    @if(isset($responseData['qrImage']))
-        <a href="{{ $responseData['qrImage'] }}" download="qr-code.png" class="download-link">
-            Download QR
-        </a>
-    @endif
-
+    <!— end Modal content—>
 </div>
+<!— End Popup Checkout Form —>
 
+<!— Page Content —>
+<div class="container" style="margin-top: 75px;margin: 0 auto;">
+    <div style="width: 200px;margin: 0 auto;">
+        <div class="wpr_payment_option">
+            <div style="margin-top: 10px">
+                <input type="radio" name="payment_option" class="payment_option" style="margin: 14px;float: left;" checked value="<?= $payment_option?>">
+                <label class="paymentOption" for="khqr">
+                    <img class="cardType" src="logos/ic_KHQR_x2.png">
+                    <span class="detailCard002" style="margin-left: 16px; float: right; position: absolute;">
+                    <strong><span class="titleCard">ABA KHQR</span><br/></strong>
+                    <span class="detailCard003" style="margin-top: 5px;">Scan to pay with any banking app</span>
+                </span>
+                </label>
+            </div>
+
+        </div>
+        <h2>TOTAL: 0.01</h2>
+        <input type="button" id="checkout_button" value="Checkout Now">
+    </div>
+</div>
+<!— End Page Content —>
+
+<script src="https://checkout.payway.com.kh/plugins/checkout2-0.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#checkout_button').click(function(){
+            // $('#aba_merchant_request').append($(".payment_option:checked"));
+            AbaPayway.checkout();
+        });
+    });
+</script>
+<!— End —>
 </body>
 </html>
