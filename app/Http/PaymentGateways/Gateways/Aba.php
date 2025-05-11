@@ -41,7 +41,6 @@ class Aba extends PaymentAbstract
                 'order'          => $order,
                 'paymentGateway' => 'aba'
             ]);
-            exit('updating');
 
          return view('aba_qr', compact('order', 'array'));
     }

@@ -92,7 +92,7 @@ class PayWayApiCheckout {
         $merchant_id = 'adoralifestyle';
         $payment_option='cards'; 
         $return_url =$array['cancel_url']; 
-        $cancel_url = $array['cancel_url'];
+        $cancel_url = $array['fail_url'];
         $continue_success_url = $array['success_url'];
         $currency = 'usd';
 
@@ -147,14 +147,15 @@ class PayWayApiCheckout {
 <script src="https://checkout.payway.com.kh/plugins/checkout2-0.js"></script>
 
 <script>
-    $(document).ready(function(){
-        setTimeout(() => {
-            $('#checkout_button').click()
-        }, 1000);
-        $('#checkout_button').click(function(){
-            // $('#aba_merchant_request').append($(".payment_option:checked"));
-            AbaPayway.checkout();
-        });
+    $(document).ready(function() {
+        function waitForAbaAndCheckout() {
+            if (typeof AbaPayway !== 'undefined' && typeof AbaPayway.checkout === 'function') {
+                AbaPayway.checkout();
+            } else {
+                setTimeout(waitForAbaAndCheckout, 200); // retry every 200ms
+            }
+        }
+        waitForAbaAndCheckout();
     });
 </script>
 <!— End —>

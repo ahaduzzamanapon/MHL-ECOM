@@ -41,7 +41,6 @@ class Card extends PaymentAbstract
                 'order'          => $order,
                 'paymentGateway' => 'card'
             ]);
-            exit('updating');
 
          return view('aba_card', compact('order', 'array'));
     }

@@ -266,13 +266,7 @@ export default {
 
             // Check if no address is found
             if (this.addresses.length === 0) {
-           // Ensure the modal opens only once
-            this.$nextTick(() => {
-                if (!this.modalOpened) {
-                    this.showTarget(this.slug + '-address-modal', 'modal-active');
-                    this.modalOpened = true;
-                }
-            });
+           
         } else {
             this.activeAddress(this.addresses[0]);
         }

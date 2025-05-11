@@ -65,6 +65,11 @@
                 class="font-bold text-center w-full h-12 leading-12 rounded-full bg-primary text-white capitalize mb-6">
                 {{ $t('label.sign_up') }}
             </button>
+
+            <span @click="click_google()" class="flex items-center" style="place-self: anchor-center;margin: 11px;">
+                <img src="https://rsadora.com/storage/google/google_signup.png" alt="Google Sign In" style="height: 45px;">
+            </span>
+
             <div class="flex items-center justify-center gap-1.5">
                 <span class="font-medium text-text">{{ $t('message.already_have_account') }}</span>
                 <router-link class="capitalize font-bold text-primary" :to="{ name: 'auth.login' }">
@@ -154,6 +159,34 @@ export default {
         countryCodeChange: function (e) {
             this.flag = e.flag_emoji;
             this.form.country_code = e.calling_code;
+        },
+        click_google: function () {
+            try {
+                this.loading.isActive = true;
+                var code = new Date().getTime();
+                window.open('/auth/google/' + code, '_blank', 'width=500,height=600');
+
+                this.$store.dispatch('login_with_google', code).then((res) => {
+                    this.loading.isActive = false;
+                    alertService.success(res.data.message);
+                    this.$store.dispatch("frontendWishlist/lists").then().catch();
+                    if(res.data.user['role_id']==1){
+                        router.push({ name: "admin.dashboard" });
+                    }else{
+                        if (this.carts.length > 0) {
+                            router.push({ name: "frontend.checkout" });
+                        } else {
+                            router.push({ name: "frontend.home" });
+                        }
+                        router.push({ name: "frontend.home" });
+                    }
+                }).catch((err) => {
+                    this.loading.isActive = false;
+                    this.errors = err.response.data.errors;
+                })
+            } catch (err) {
+                this.loading.isActive = false;
+            }
         },
         signup: function () {
             try {

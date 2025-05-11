@@ -40,7 +40,7 @@
                               :title="$t('label.shipping_address')" :show="true" :selectedAddress="getShippingAddress"
                               :method="shippingAddress"/>
 
-            <div v-if="orderType === orderTypeEnum.DELIVERY" class="flex items-start mb-6">
+            <div v-if="orderType === orderTypeEnum.DELIVERY" class="flex items-start mb-6 d-none" style="display: none">
                 <input checked="checked" :value="shippingAndBillingCheck" @click="checkBillingCheckBox($event)"
                        type="checkbox"
                        id="shipping-and-billing-is-same" class="cs-custom-checkbox">
@@ -136,6 +136,10 @@ export default {
         }).catch((err) => {
             this.loading.isActive = false;
         });
+
+        this.billingStatus           = false;
+                this.shippingAndBillingCheck = true;
+                this.$store.dispatch('frontendCart/billingAddress', this.getShippingAddress).then().catch();
 
         this.loading.isActive = true;
         this.$store.dispatch('frontendOutlet/lists', {

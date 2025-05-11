@@ -14,8 +14,8 @@
                         class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border" style="display: flex;flex-direction: row;padding: 7px;width: 304px;justify-content: flex-start;">
                         <img class="h-6" :src="cashOnDelivery.image" alt="payment" style="height: 54px;width: 66px;" />
                         <div style="display: flex;flex-direction: column;">
-                            <span class="text-xm font-medium">{{ cashOnDelivery.name }}</span>
-                            <span class="text-xs font-thin">Pay with {{ cashOnDelivery.name }}</span>
+                            <span class="text-xm font-medium" style="font-size: 21px;">{{ cashOnDelivery.name }}</span>
+                            <span class="text-xs" style="font-size: 14px;font-weight: 400;">Pay with {{ cashOnDelivery.name }}</span>
                         </div>
                     </div>
                     <!-- <div v-if="profile.balance >= total" @click.prevent="selectPaymentMethod(credit)"
@@ -30,16 +30,16 @@
                         class="flex flex-col items-center justify-center gap-2.5 py-4 rounded-lg shadow-xs cursor-pointer border" style="display: flex;flex-direction: row;padding: 7px;width: 304px;justify-content: flex-start;">
                         <img class="h-6" :src="paymentGateway.image" alt="payment" style="height: 54px;width: 66px;"  />
                         <div style="display: flex;flex-direction: column;">
-                            <span class="text-xm font-medium">{{ paymentGateway.name }}</span>
-                            <span class="text-xs font-thin" v-if="paymentGateway.name === 'Credit/Debit Card'">
-                                <img src="https://rsadora.com/storage/payment_getway/cards.png" class="h-4 inline-block" />
+                            <span class="text-xm font-medium" style="font-size: 21px;">{{ paymentGateway.name }}</span>
+                            <span class="text-xs" v-if="paymentGateway.name === 'Credit/Debit Card'">
+                                <img style="width: 194px; height: 34px;" src="https://rsadora.com/storage/payment_getway/cards.png" class="h-4 inline-block" />
                             </span>
-                            <span class="text-xs font-thin" v-else >
+                            <span class="text-xs" style="font-size: 14px;font-weight: 400;" v-else >
                                 {{ 
                                     paymentGateway.name === "ABA KHQR" ? 
                                         "Scan to pay with any banking app" 
                                     : paymentGateway.name === "Credit/Debit Card" ? 
-                                        "Pay with <img src='/storage/payment_getway/cards.png' class='h-4 inline-block' />"
+                                        "Pay with <img style='width: 194px; height: 34px;' src='/storage/payment_getway/cards.png' class='h-4 inline-block' />"
                                     : "Pay with " + paymentGateway.name 
                                 }}
                             </span>

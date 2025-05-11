@@ -1,5 +1,7 @@
 <template>
     <LoadingComponent :props="loading" />
+
+    
     <div class="w-full max-w-xl mx-auto rounded-2xl flex overflow-hidden gap-y-6 bg-white shadow-card mb-24 !sm:mb-0">
 
         <form class="w-full p-6" @submit.prevent="login">
@@ -83,12 +85,20 @@
                 class="font-bold text-center w-full h-12 leading-12 rounded-full bg-primary text-white capitalize mb-6">
                 {{ $t('label.sign_in') }}
             </button>
+
+            <span @click="click_google()" class="flex items-center" style="place-self: anchor-center;margin: 11px;">
+                <img src="https://rsadora.com/storage/google/google-signin-button.png" alt="Google Sign In" style="height: 45px;">
+            </span>
+
             <div class="flex items-center justify-center gap-1.5">
                 <span class="font-medium text-text">{{ $t('message.dont_have_account') }}</span>
                 <router-link class="capitalize font-bold text-primary" :to="{ name: 'auth.signup' }">
                     {{ $t('label.sign_up') }}
                 </router-link>
             </div>
+
+           
+
 
             <div v-if="demo === 'true' || demo === 'TRUE' || demo === 'True' || demo === '1' || demo === 1"
                 class="mt-6">
@@ -208,7 +218,6 @@ export default {
         },
         handleField: function () {
             this.toggleValue = !this.toggleValue
-
             if (this.toggleValue) {
                 this.form.email = "";
                 this.inputLabel = this.$t('label.phone');
@@ -217,6 +226,34 @@ export default {
                 this.form.phone = "";
                 this.inputLabel = this.$t('label.email');
                 this.inputButton = this.$t('label.use_phone_instead');
+            }
+        },
+        click_google: function () {
+            try {
+                this.loading.isActive = true;
+                var code = new Date().getTime();
+                window.open('/auth/google/' + code, '_blank', 'width=500,height=600');
+
+                this.$store.dispatch('login_with_google', code).then((res) => {
+                    this.loading.isActive = false;
+                    alertService.success(res.data.message);
+                    this.$store.dispatch("frontendWishlist/lists").then().catch();
+                    if(res.data.user['role_id']==1){
+                        router.push({ name: "admin.dashboard" });
+                    }else{
+                        if (this.carts.length > 0) {
+                            router.push({ name: "frontend.checkout" });
+                        } else {
+                            router.push({ name: "frontend.home" });
+                        }
+                        router.push({ name: "frontend.home" });
+                    }
+                }).catch((err) => {
+                    this.loading.isActive = false;
+                    this.errors = err.response.data.errors;
+                })
+            } catch (err) {
+                this.loading.isActive = false;
             }
         },
         countryCodeChange: function (e) {

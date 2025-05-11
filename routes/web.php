@@ -6,6 +6,7 @@ use App\Http\Controllers\Installer\InstallerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\PaymentGateways\Gateways\Aba;
+use App\Http\Controllers\Auth\LoginController;
 
 
 
@@ -47,7 +48,9 @@ Route::prefix('payment')->name('payment.')->middleware(['installed'])->group(fun
 
 
 
-Route::post('/payment/aba/webhook', [Aba::class, 'webhook'])->name('aba.webhook');
+
+Route::get('/auth/google/{code}', [LoginController::class, 'redirectToGoogle']);
+Route::get('/auth/googles/callback', [LoginController::class, 'handleGoogleCallback']);
 
 
 Route::get('/artisan/{any}', function ($any) {

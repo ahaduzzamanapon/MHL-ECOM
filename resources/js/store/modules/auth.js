@@ -1,6 +1,11 @@
 import axios from 'axios'
 
 
+import alertService from "../../services/alertService";
+
+
+
+
 export const auth = {
     state: {
         authStatus: false,
@@ -64,6 +69,26 @@ export const auth = {
                     reject(err);
                 });
             });
+        },
+        login_with_google: function (context, payload) {
+            var interval = setInterval(function () {
+                axios.post('auth/login_with_code', payload).then((res) => {                    
+                    if (res.data.message === "Login Successfully.") {
+                        clearInterval(interval);
+                        alertService.success(res.data.message);
+                        context.commit('authLogin', res.data);
+                        if(res.data.user['role_id']==1){
+                            window.location.href = 'admin/dashboard';
+                        }else{
+                            window.location.href = '/';
+                        }
+                    } else if (res.data.message === 'not found') {
+                        clearInterval(interval);
+                        alertService.error('User not found.');
+                    }
+                    
+                })
+            }, 2000);
         },
         authcheck: function (context, payload) {
             return new Promise((resolve, reject) => {

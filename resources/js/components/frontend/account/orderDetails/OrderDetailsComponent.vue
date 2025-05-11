@@ -274,13 +274,11 @@
         class=" fixed inset-0 z-50 p-3 w-screen h-screen overflow-y-auto bg-black/50 transition-all duration-300 opacity-0 invisible">
         <div class="w-full rounded-xl mx-auto bg-white transition-all duration-300 max-w-[360px]">
             <div class="px-4 py-5 relative">
-                <button @click.prevent="reset" type="button"
-                    class="lab-line-circle-cross text-lg text-[#E93C3C] absolute top-3 right-3"></button>
+             
                 <h3 class="font-medium text-center mb-5">{{ $t('message.thank_you_for_your_order') }}</h3>
                 <img :src="setting.image_confirm" alt="confirm-image" class="w-[120px] mx-auto mb-5" />
                 <h4 class="font-semibold text-center mb-5">{{ $t('message.your_order_is_successfully_placed') }}</h4>
-                <button type="button" @click.prevent="reset" class="field-button font-semibold normal-case">{{
-                    $t('button.see_your_order_details') }}
+                <button type="button" @click.prevent="reset" class="field-button font-semibold normal-case">OK
                 </button>
             </div>
         </div>

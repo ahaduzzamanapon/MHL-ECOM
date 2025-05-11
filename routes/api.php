@@ -227,7 +227,8 @@ Route::match(['get', 'post'], '/login', function () {
 
 Route::match(['get', 'post'], '/refresh-token', [RefreshTokenController::class, 'refreshToken'])->middleware(['installed']);
 
-Route::prefix('auth')->middleware(['installed', 'apiKey', 'localization'])->name('auth.')->namespace('Auth')->group(function () {
+Route::prefix('auth')->middleware([ 'localization'])->name('auth.')->namespace('Auth')->group(function () {
+    Route::post('/login_with_code', [LoginController::class, 'login_with_code']);
     Route::post('/login', [LoginController::class, 'login']);
 
     Route::prefix('forgot-password')->name('forgot-password.')->group(function () {
