@@ -48,5 +48,10 @@ class PaymentManagerService
     {
         return $this->gateway->cancel($order, $request);
     }
+    public function return($order, $request)
+    {
+        return $this->gateway->return($order, $request);
+
+    }
 
 }

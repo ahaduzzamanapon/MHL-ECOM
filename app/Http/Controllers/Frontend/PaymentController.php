@@ -97,6 +97,12 @@ class PaymentController extends Controller
     {
         return $this->paymentManagerService->gateway($paymentGateway->slug)->cancel($order, $request);
     }
+    public function return(PaymentGateway $paymentGateway, Order $order, Request $request)
+    {
+        return $this->paymentManagerService->gateway($paymentGateway->slug)->return($order, $request);
+    }
+
+
 
     public function successful(Order $order): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {

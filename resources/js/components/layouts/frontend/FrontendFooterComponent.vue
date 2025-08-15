@@ -101,7 +101,7 @@
                 <div style="display:flex;gap:10px;align-items: center;">
                     <h2 class=" text-white">We Accept:</h2>
                     <div style="display: flex;gap: 10px;">
-                        <img style="height: 23px;" src="https://rsadora.com/storage/payment_getway/weaccept.png" alt="app">
+                        <img style="height: 23px;" src="https://rsadora.com/storage/payment_getway/weaccept.svg" alt="app">
                     </div>
                 </div>
             </div>

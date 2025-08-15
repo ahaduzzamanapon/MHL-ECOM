@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\PaymentGateways\Gateways\Aba;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\TransectionCheckController;
 
 
 
@@ -20,6 +21,9 @@ use App\Http\Controllers\Auth\LoginController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/transection_check_auto', [TransectionCheckController::class, 'index']);
+
+
 
 Route::prefix('install')->name('installer.')->middleware(['web'])->group(function () {
     Route::get('/', [InstallerController::class, 'index'])->name('index');
@@ -40,11 +44,14 @@ Route::prefix('payment')->name('payment.')->middleware(['installed'])->group(fun
     Route::get('/{paymentGateway:slug}/pay/{order}', [PaymentController::class, 'index'])->name('index');
     Route::post('/{order}/pay', [PaymentController::class, 'payment'])->name('store');
     Route::match(['get', 'post'], '/{paymentGateway:slug}/{order}/success', [PaymentController::class, 'success'])->name('success');
+    Route::any('/{paymentGateway:slug}/{order}/return', [PaymentController::class, 'cancel'])->name('return');
     Route::match(['get', 'post'], '/{paymentGateway:slug}/{order}/fail', [PaymentController::class, 'fail'])->name('fail');
     Route::match(['get', 'post'], '/{paymentGateway:slug}/{order}/cancel', [PaymentController::class, 'cancel'])->name('cancel');
     Route::get('/successful/{order}', [PaymentController::class, 'successful'])->name('successful');
     Route::get('/somoy', [PaymentController::class, 'somoy_webhook'])->name('somoy');
 });
+
+
 
 
 

@@ -7,7 +7,7 @@
 | API URL that is provided by PayWay must be required in your post form
 |
 */
-define('ABA_PAYWAY_API_URL', 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase');
+define('ABA_PAYWAY_API_URL', 'https://checkout.payway.com.kh/api/payment-gateway/v1/payments/purchase');
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +16,7 @@ define('ABA_PAYWAY_API_URL', 'https://checkout-sandbox.payway.com.kh/api/payment
 | API KEY that is generated and provided by PayWay must be required in your post form
 |
 */
-define('ABA_PAYWAY_API_KEY', 'bc1d4e36-ca0c-4da3-930d-da5d67500e80');
+define('ABA_PAYWAY_API_KEY', 'c3dabc49-77db-4b9a-b277-c8ad3d256fba');
 
 /*
 |--------------------------------------------------------------------------
@@ -77,25 +77,30 @@ class PayWayApiCheckout {
 <div id="aba_main_modal" class="aba-modal">
     <!— Modal content —>
     <div class="aba-modal-content">
-
-
         <!-- Include PHP class -->
         <?php
-
-        $transactionId = time();
+        $user_id = $order->user_id;
+        $user = \App\Models\User::find($user_id);
+        $transactionId = 'trn-'.(string) time() . str_pad((string) rand(0, 99999), 5, '0', STR_PAD_LEFT);
         $amount = $order->total;
-        $firstName = $order->first_name;
-        $lastName = $order->last_name;
-        $phone = $order->phone;
-        $email = $order->email;
+        $firstName = $user->name;
+        $lastName = $user->name;
+        $phone = $user->phone;
+        $email = $user->email;
         $req_time = time();
         $merchant_id = 'adoralifestyle';
         $payment_option='cards'; 
-        $return_url =$array['cancel_url']; 
+        $return_url =$array['return_url']; 
         $cancel_url = $array['fail_url'];
         $continue_success_url = $array['success_url'];
         $currency = 'usd';
 
+
+        $TransectionChack = new \App\Models\TransectionChack();
+        $TransectionChack->transaction_id = $transactionId;
+        $TransectionChack->order = $order->id;
+        $TransectionChack->success_url = $array['success_url'];
+        $TransectionChack->save();
 
         $hashdata=PayWayApiCheckout::getHash($req_time . $merchant_id . $transactionId . $amount.$firstName.$lastName.$email.$phone .$payment_option. $return_url . $cancel_url . $continue_success_url.$currency)
         ?>
@@ -157,6 +162,9 @@ class PayWayApiCheckout {
         }
         waitForAbaAndCheckout();
     });
+
+
+    
 </script>
 <!— End —>
 </body>

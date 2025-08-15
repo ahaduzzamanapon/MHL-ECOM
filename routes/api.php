@@ -113,6 +113,7 @@ use App\Http\Controllers\Frontend\PromotionProductController as FrontendPromotio
 use App\Http\Controllers\Frontend\ProductSectionProductController as FrontendProductSectionProductController;
 use App\Http\Controllers\RedxCourierController;
 use App\Http\Controllers\PathaoCourierController;
+use App\Http\Controllers\TransectionCheckController;
 
 
 /*
@@ -128,8 +129,11 @@ use App\Http\Controllers\PathaoCourierController;
 
 Route::post('/get_product_by_sku', [ProductController::class, 'get_product_by_sku']);
 Route::post('/courier_status', [OnlineOrderController::class, 'courier_status']);
+
+
 Route::get('/get_area_list', [RedxCourierController::class, 'get_area_list']);
 
+Route::get('/get_aba_config_data', [TransectionCheckController::class, 'get_aba_config_data']);
 
 
 Route::get('/settings/couriers', function () {
